@@ -56,15 +56,59 @@ window.onload = function() {
   atualizarAcessos();
 };
 
-abrirCameraBtn.onclick = async function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
-    video.classList.remove('hidden');
-    tirarFotoBtn.classList.remove('hidden');
-    abrirCameraBtn.classList.add('hidden');
-    foto.classList.add('hidden');
+const cameraOptionsDiv = document.createElement('div');
+cameraOptionsDiv.className = 'flex gap-2 mb-2';
+const btnFrontal = document.createElement('button');
+btnFrontal.type = 'button';
+btnFrontal.id = 'btnCameraFront';
+btnFrontal.textContent = 'Câmera Frontal';
+btnFrontal.className = 'bg-blue-400 hover:bg-blue-600 text-white font-semibold px-2 py-1 rounded text-xs';
+const btnTraseira = document.createElement('button');
+btnTraseira.type = 'button';
+btnTraseira.id = 'btnCameraBack';
+btnTraseira.textContent = 'Câmera Traseira';
+btnTraseira.className = 'bg-green-400 hover:bg-green-600 text-white font-semibold px-2 py-1 rounded text-xs';
+
+// Adiciona os botões acima do vídeo
+const fotoDiv = document.getElementById('foto').parentElement;
+if (fotoDiv && !document.getElementById('btnCameraFront')) {
+  fotoDiv.parentElement.insertBefore(cameraOptionsDiv, fotoDiv);
+  cameraOptionsDiv.appendChild(btnFrontal);
+  cameraOptionsDiv.appendChild(btnTraseira);
+}
+
+let cameraFacingMode = 'user'; // padrão frontal
+
+btnFrontal.onclick = async function() {
+  cameraFacingMode = 'user';
+  await abrirCameraComFacingMode(cameraFacingMode);
+};
+btnTraseira.onclick = async function() {
+  cameraFacingMode = 'environment';
+  await abrirCameraComFacingMode(cameraFacingMode);
+};
+
+async function abrirCameraComFacingMode(facingMode) {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
   }
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+      video.srcObject = stream;
+      video.classList.remove('hidden');
+      tirarFotoBtn.classList.remove('hidden');
+      abrirCameraBtn.classList.add('hidden');
+      foto.classList.add('hidden');
+    } catch (e) {
+      alert('Não foi possível acessar a câmera: ' + e.message);
+    }
+  }
+}
+
+abrirCameraBtn.onclick = async function() {
+  cameraFacingMode = 'user';
+  await abrirCameraComFacingMode(cameraFacingMode);
 };
 
 tirarFotoBtn.onclick = function() {
