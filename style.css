@@ -1,0 +1,102 @@
+body {
+  background: linear-gradient(135deg, #4f8cff 0%, #6ee7b7 100%);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+.container {
+  background: #fff;
+  max-width: 500px;
+  margin: 40px auto;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 32px 28px 24px 28px;
+}
+h1 {
+  text-align: center;
+  color: #2563eb;
+  margin-bottom: 28px;
+  font-size: 2.1rem;
+  letter-spacing: 1px;
+}
+.form-group {
+  margin-bottom: 18px;
+}
+label {
+  display: block;
+  color: #222;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+input[type="text"],
+input[type="date"],
+input[type="time"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #bcd0ee;
+  border-radius: 7px;
+  font-size: 1rem;
+  background: #f7fafc;
+  transition: border 0.2s;
+}
+input:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+}
+button {
+  background: linear-gradient(90deg, #2563eb 60%, #6ee7b7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 8px;
+  margin-top: 6px;
+  transition: background 0.2s;
+}
+button:hover {
+  background: linear-gradient(90deg, #1e40af 60%, #34d399 100%);
+}
+#acessos {
+  margin-top: 32px;
+}
+#acessos h2 {
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+.acesso-item {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.acesso-item img {
+  width: 60px;
+  height: 45px;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-top: 6px;
+}
+.botoes-acao {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.botoes-acao button {
+  background: linear-gradient(90deg, #2563eb 60%, #6ee7b7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.botoes-acao button:hover {
+  background: linear-gradient(90deg, #1e40af 60%, #34d399 100%);
+}

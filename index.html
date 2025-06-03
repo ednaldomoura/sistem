@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Acesso - Prestadores de Serviço</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-400 to-green-200 min-h-screen flex items-center justify-center">
+  <div class="container w-full max-w-xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 my-4 sm:my-8 mx-2 sm:mx-0">
+    <h1 class="text-xl sm:text-2xl font-bold text-blue-700 text-center mb-6 sm:mb-8">Controle de Acesso - Prestadores de Serviço</h1>
+    <form id="acessoForm" class="space-y-3 sm:space-y-4">
+      <div>
+        <label class="block font-medium text-gray-700">Apartamento:</label>
+        <input type="text" id="apartamento" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Nome:</label>
+        <input type="text" id="nome" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Documento:</label>
+        <input type="text" id="documento" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Quem autorizou:</label>
+        <input type="text" id="autorizou" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <div class="flex-1">
+          <label class="block font-medium text-gray-700">Data Entrada:</label>
+          <input type="date" id="dataEntrada" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium text-gray-700">Hora Entrada:</label>
+          <input type="time" id="horaEntrada" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <div class="flex-1">
+          <label class="block font-medium text-gray-700">Data Saída:</label>
+          <input type="date" id="dataSaida" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium text-gray-700">Hora Saída:</label>
+          <input type="time" id="horaSaida" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Empresa:</label>
+        <input type="text" id="empresa" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Serviço:</label>
+        <input type="text" id="servico" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Foto:</label>
+        <div class="flex flex-col sm:flex-row items-center gap-2 mt-1">
+          <video id="video" width="120" height="90" autoplay class="rounded-lg border border-gray-300 hidden"></video>
+          <canvas id="canvas" width="120" height="90" class="hidden"></canvas>
+          <img id="foto" src="" alt="Foto do prestador" class="rounded-lg border border-gray-300 hidden cursor-pointer max-w-[120px] max-h-[90px]" />
+        </div>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button type="button" id="abrirCamera" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1 rounded text-sm">Abrir Câmera</button>
+          <button type="button" id="tirarFoto" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded text-sm hidden">Tirar Foto</button>
+          <button type="button" id="btnAbrirFoto" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-3 py-1 rounded text-sm">Abrir Arquivo de Foto</button>
+          <input type="file" id="inputFotoArquivo" accept="image/*" class="hidden" />
+        </div>
+      </div>
+      <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-green-400 hover:from-blue-700 hover:to-green-500 text-white font-bold py-2 rounded-lg shadow mt-4 text-base sm:text-lg">Registrar Acesso</button>
+    </form>
+    <div id="acessos" class="mt-8"></div>
+    <div class="flex flex-wrap gap-2 justify-center mt-6">
+      <button type="button" id="btnRelatorio" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Exportar CSV</button>
+      <button type="button" id="btnExportarPDF" class="bg-red-500 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Exportar PDF</button>
+      <button type="button" id="btnExportarArquivo" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Arquivo</button>
+      <input type="text" id="buscaInput" placeholder="Buscar por nome ou documento" class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 text-sm sm:text-base" />
+      <button type="button" id="btnBuscar" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Buscar</button>
+      <button type="button" id="btnLimparBusca" class="bg-gray-400 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Limpar Busca</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
