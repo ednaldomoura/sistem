@@ -317,3 +317,35 @@ if (btnLimparBusca && buscaInput) {
     atualizarAcessos();
   };
 }
+
+// Botão Enviar PDF por Email
+const btnEnviarEmail = document.getElementById('btnEnviarEmail');
+if (btnEnviarEmail) {
+  btnEnviarEmail.onclick = function() {
+    const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+    if (acessosSalvos.length === 0) {
+      alert('Nenhum registro para exportar!');
+      return;
+    }
+    // Gera o HTML do relatório
+    let html = '<h2>Relatório de Acessos</h2>';
+    html += '<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-family:sans-serif;">';
+    html += '<tr><th>Apartamento</th><th>Nome</th><th>Documento</th><th>Quem autorizou</th><th>Data Entrada</th><th>Hora Entrada</th><th>Data Saída</th><th>Hora Saída</th><th>Empresa</th><th>Serviço</th><th>Baixado</th></tr>';
+    acessosSalvos.forEach(a => {
+      html += `<tr><td>${a.apartamento}</td><td>${a.nome}</td><td>${a.documento}</td><td>${a.autorizou}</td><td>${a.dataEntrada}</td><td>${a.horaEntrada}</td><td>${a.dataSaida}</td><td>${a.horaSaida}</td><td>${a.empresa}</td><td>${a.servico}</td><td>${a.baixado ? 'Sim' : 'Não'}</td></tr>`;
+    });
+    html += '</table>';
+    // Cria um blob PDF usando o print-to-pdf do navegador
+    const win = window.open('', '', 'width=900,height=700');
+    win.document.write('<html><head><title>Relatório de Acessos</title></head><body>' + html + '</body></html>');
+    win.document.close();
+    // Solicita o email do usuário
+    setTimeout(() => {
+      win.print();
+      const email = prompt('Digite o e-mail de destino para enviar o PDF:');
+      if (email) {
+        alert('Para enviar o PDF por e-mail, anexe o arquivo PDF gerado ao e-mail manualmente.\n\nPor questões de segurança, o envio automático só é possível com integração de backend.');
+      }
+    }, 500);
+  };
+}
