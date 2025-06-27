@@ -306,14 +306,14 @@
         // Function to set current date and time
         function setCurrentDateTime() {
             const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const hh = String(now.getHours()).padStart(2, '0');
-            const min = String(now.getMinutes()).padStart(2, '0');
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
 
-            document.getElementById('dataEntrada').value = `${yyyy}-${mm}-${dd}`;
-            document.getElementById('horaEntrada').value = `${hh}:${min}`;
+            document.getElementById('dataEntrada').value = `${year}-${month}-${day}`;
+            document.getElementById('horaEntrada').value = `${hours}:${minutes}`;
         }
 
         // Function to update access records display
@@ -322,6 +322,13 @@
             const noRecordsMessage = document.getElementById('noRecordsMessage');
             acessosDiv.innerHTML = '';
             let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+
+            // Sort records by date and time of entry in descending order (most recent first)
+            acessosSalvos.sort((a, b) => {
+                const dateA = new Date(`${a.dataEntrada}T${a.horaEntrada}`);
+                const dateB = new Date(`${b.dataEntrada}T${b.horaEntrada}`);
+                return dateB - dateA; // Descending order
+            });
 
             if (filtro) {
                 const termo = filtro.trim().toLowerCase();
@@ -511,12 +518,12 @@
                         acessosSalvos[idx].baixado = true;
                         // Automatically fill dataSaida and horaSaida
                         const agora = new Date();
-                        const yyyyNow = agora.getFullYear();
+                        const yearNow = agora.getFullYear();
                         const mmNow = String(agora.getMonth() + 1).padStart(2, '0');
                         const ddNow = String(agora.getDate()).padStart(2, '0');
                         const hhNow = String(agora.getHours()).padStart(2, '0');
                         const minNow = String(agora.getMinutes()).padStart(2, '0');
-                        acessosSalvos[idx].dataSaida = `${yyyyNow}-${mmNow}-${ddNow}`;
+                        acessosSalvos[idx].dataSaida = `${yearNow}-${mmNow}-${ddNow}`;
                         acessosSalvos[idx].horaSaida = `${hhNow}:${minNow}`;
                         localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
                         atualizarAcessos();
