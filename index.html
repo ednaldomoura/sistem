@@ -294,7 +294,7 @@
         let stream = null;
         let fotoData = '';
         let cameraFacingMode = 'user'; // default to front camera
-        let editingIndex = -1; // -1 means no editing, otherwise it's the index of the item being edited
+        let editingId = -1; // Stores the ID of the item being edited, -1 means no editing
 
         // Screen elements
         const formScreen = document.getElementById('formScreen');
@@ -325,43 +325,44 @@
 
             // Sort records by date and time of entry in descending order (most recent first)
             acessosSalvos.sort((a, b) => {
-                const dateA = new Date(`${a.dataEntrada}T${a.horaEntrada}`);
-                const dateB = new Date(`${b.dataEntrada}T${b.horaEntrada}`);
-                return dateB - dateA; // Descending order
+                // Handle cases where dataEntrada or horaEntrada might be missing or invalid
+                const dateA = new Date(`${a.dataEntrada || '1970-01-01'}T${a.horaEntrada || '00:00'}`);
+                const dateB = new Date(`${b.dataEntrada || '1970-01-01'}T${b.horaEntrada || '00:00'}`);
+                return dateB.getTime() - dateA.getTime(); // Descending order based on timestamp
             });
 
             if (filtro) {
                 const termo = filtro.trim().toLowerCase();
                 acessosSalvos = acessosSalvos.filter(a =>
-                    a.nome.toLowerCase().includes(termo) ||
-                    a.documento.toLowerCase().includes(termo) ||
-                    a.apartamento.toLowerCase().includes(termo)
+                    (a.nome && a.nome.toLowerCase().includes(termo)) ||
+                    (a.documento && a.documento.toLowerCase().includes(termo)) ||
+                    (a.apartamento && a.apartamento.toLowerCase().includes(termo))
                 );
             }
 
             if (acessosSalvos.length > 0) {
                 noRecordsMessage.classList.add('hidden');
-                acessosSalvos.forEach((acesso, idx) => {
+                acessosSalvos.forEach((acesso) => { // No need for idx here, using acesso.id
                     const div = document.createElement('div');
                     div.className = 'acesso-item bg-gray-100 rounded-lg p-4 mb-4 shadow flex flex-col md:flex-row md:items-center gap-4 border border-gray-200';
                     let status = acesso.baixado ? '<span class="text-green-700 font-bold ml-2">(Baixado)</span>' : '';
                     div.innerHTML = `
                         <div class="flex-1 text-gray-800">
-                            <strong>Apartamento:</strong> ${acesso.apartamento}<br>
-                            <strong>Nome:</strong> ${acesso.nome}<br>
-                            <strong>Documento:</strong> ${acesso.documento}<br>
-                            <strong>Quem autorizou:</strong> ${acesso.autorizou}<br>
-                            <strong>Entrada:</strong> ${acesso.dataEntrada} ${acesso.horaEntrada}<br>
+                            <strong>Apartamento:</strong> ${acesso.apartamento || 'N/A'}<br>
+                            <strong>Nome:</strong> ${acesso.nome || 'N/A'}<br>
+                            <strong>Documento:</strong> ${acesso.documento || 'N/A'}<br>
+                            <strong>Quem autorizou:</strong> ${acesso.autorizou || 'N/A'}<br>
+                            <strong>Entrada:</strong> ${acesso.dataEntrada || 'N/A'} ${acesso.horaEntrada || 'N/A'}<br>
                             <strong>Saída:</strong> ${acesso.dataSaida || 'N/A'} ${acesso.horaSaida || 'N/A'}<br>
                             <strong>Empresa:</strong> ${acesso.empresa || 'N/A'}<br>
                             <strong>Serviço:</strong> ${acesso.servico || 'N/A'}${status}
                         </div>
                         <div class="flex flex-col items-center justify-center gap-2 mt-2 md:mt-0">
-                            ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${idx}" />` : ''}
+                            ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${acesso.id}" />` : ''}
                             <div class="flex flex-wrap justify-center gap-2 mt-2">
-                                <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-index="${idx}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
-                                <button class="btn-editar bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${idx}">Editar</button>
-                                <button class="btn-excluir bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${idx}">Excluir</button>
+                                <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-id="${acesso.id}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
+                                <button class="btn-editar bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-id="${acesso.id}">Editar</button>
+                                <button class="btn-excluir bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-id="${acesso.id}">Excluir</button>
                             </div>
                         </div>
                     `;
@@ -465,7 +466,7 @@
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
-            editingIndex = -1; // Reset editing state
+            editingId = -1; // Reset editing state
             submitFormBtn.textContent = 'Registrar Acesso'; // Revert button text
             cancelEditBtn.classList.add('hidden'); // Hide cancel button
             setCurrentDateTime(); // Set current date and time for new entry
@@ -475,7 +476,7 @@
         const form = document.getElementById('acessoForm');
         form.onsubmit = function(e) {
             e.preventDefault();
-            const acesso = {
+            const novoAcesso = {
                 apartamento: document.getElementById('apartamento').value,
                 nome: document.getElementById('nome').value,
                 documento: document.getElementById('documento').value,
@@ -487,18 +488,31 @@
                 empresa: document.getElementById('empresa').value || '',
                 servico: document.getElementById('servico').value || '',
                 foto: fotoData,
-                baixado: false // New records are not "baixado" by default
+                // The 'baixado' status should be preserved if editing, or set to false for new entries.
+                // If editing, it will be merged below.
             };
 
             let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
 
-            if (editingIndex !== -1) {
+            if (editingId !== -1) {
                 // Update existing record
-                acessosSalvos[editingIndex] = { ...acessosSalvos[editingIndex], ...acesso }; // Merge to preserve baixado status if not explicitly set
-                showModalMessage('Acesso atualizado com sucesso!');
+                const foundIndex = acessosSalvos.findIndex(a => a.id == editingId);
+                if (foundIndex !== -1) {
+                    // Merge new data with existing, preserving the original ID and 'baixado' status
+                    acessosSalvos[foundIndex] = {
+                        ...acessosSalvos[foundIndex], // Keep existing properties like 'baixado'
+                        ...novoAcesso, // Overlay with new form data
+                        id: editingId // Ensure the ID remains the same
+                    };
+                    showModalMessage('Acesso atualizado com sucesso!');
+                } else {
+                    showModalMessage('Erro ao atualizar: Registro não encontrado.');
+                }
             } else {
                 // Add new record
-                acessosSalvos.push(acesso);
+                novoAcesso.id = Date.now(); // Assign unique ID for new records
+                novoAcesso.baixado = false; // New records are not "baixado" by default
+                acessosSalvos.push(novoAcesso);
                 showModalMessage('Acesso registrado com sucesso!');
             }
             localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
@@ -509,13 +523,18 @@
         // Delegated event listener for "Dar Baixa", "Editar", "Excluir" and photo amplification
         const acessosDiv = document.getElementById('acessos');
         acessosDiv.addEventListener('click', function(e) {
+            // Get the ID from the clicked button/image
+            const itemId = e.target.getAttribute('data-id');
+            const clickedImgId = e.target.getAttribute('data-ampliar'); // For image amplification
+
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            const foundIndex = acessosSalvos.findIndex(a => a.id == itemId);
+
             // Dar Baixa
-            if (e.target.classList.contains('btn-baixa-individual')) {
-                const idx = e.target.getAttribute('data-index');
-                let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos[idx] && !acessosSalvos[idx].baixado) { // Only allow if not already baixado
+            if (e.target.classList.contains('btn-baixa-individual') && foundIndex !== -1) {
+                if (!acessosSalvos[foundIndex].baixado) {
                     showModalMessage('Tem certeza que deseja dar baixa neste acesso?', 'confirm', () => {
-                        acessosSalvos[idx].baixado = true;
+                        acessosSalvos[foundIndex].baixado = true;
                         // Automatically fill dataSaida and horaSaida
                         const agora = new Date();
                         const yearNow = agora.getFullYear();
@@ -523,58 +542,52 @@
                         const ddNow = String(agora.getDate()).padStart(2, '0');
                         const hhNow = String(agora.getHours()).padStart(2, '0');
                         const minNow = String(agora.getMinutes()).padStart(2, '0');
-                        acessosSalvos[idx].dataSaida = `${yearNow}-${mmNow}-${ddNow}`;
-                        acessosSalvos[idx].horaSaida = `${hhNow}:${minNow}`;
+                        acessosSalvos[foundIndex].dataSaida = `${yearNow}-${mmNow}-${ddNow}`;
+                        acessosSalvos[foundIndex].horaSaida = `${hhNow}:${minNow}`;
                         localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
                         atualizarAcessos();
                         showModalMessage('Acesso baixado com sucesso!');
                     });
-                } else if (acessosSalvos[idx].baixado) {
+                } else {
                     showModalMessage('Este acesso já foi baixado.');
                 }
             }
             // Editar
-            if (e.target.classList.contains('btn-editar')) {
-                const idx = e.target.getAttribute('data-index');
-                let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                const acessoToEdit = acessosSalvos[idx];
+            if (e.target.classList.contains('btn-editar') && foundIndex !== -1) {
+                const acessoToEdit = acessosSalvos[foundIndex];
 
-                if (acessoToEdit) {
-                    showScreen('formScreen'); // Switch to form screen
-                    editingIndex = idx; // Set editing index
+                showScreen('formScreen'); // Switch to form screen
+                editingId = acessoToEdit.id; // Set editing ID
 
-                    // Populate form fields
-                    document.getElementById('apartamento').value = acessoToEdit.apartamento || '';
-                    document.getElementById('nome').value = acessoToEdit.nome || '';
-                    document.getElementById('documento').value = acessoToEdit.documento || '';
-                    document.getElementById('autorizou').value = acessoToEdit.autorizou || '';
-                    document.getElementById('dataEntrada').value = acessoToEdit.dataEntrada || '';
-                    document.getElementById('horaEntrada').value = acessoToEdit.horaEntrada || '';
-                    document.getElementById('dataSaida').value = acessoToEdit.dataSaida || '';
-                    document.getElementById('horaSaida').value = acessoToEdit.horaSaida || '';
-                    document.getElementById('empresa').value = acessoToEdit.empresa || '';
-                    document.getElementById('servico').value = acessoToEdit.servico || '';
+                // Populate form fields
+                document.getElementById('apartamento').value = acessoToEdit.apartamento || '';
+                document.getElementById('nome').value = acessoToEdit.nome || '';
+                document.getElementById('documento').value = acessoToEdit.documento || '';
+                document.getElementById('autorizou').value = acessoToEdit.autorizou || '';
+                document.getElementById('dataEntrada').value = acessoToEdit.dataEntrada || '';
+                document.getElementById('horaEntrada').value = acessoToEdit.horaEntrada || '';
+                document.getElementById('dataSaida').value = acessoToEdit.dataSaida || '';
+                document.getElementById('horaSaida').value = acessoToEdit.horaSaida || '';
+                document.getElementById('empresa').value = acessoToEdit.empresa || '';
+                document.getElementById('servico').value = acessoToEdit.servico || '';
 
-                    if (acessoToEdit.foto) {
-                        foto.src = acessoToEdit.foto;
-                        foto.classList.remove('hidden');
-                        fotoData = acessoToEdit.foto;
-                    } else {
-                        foto.classList.add('hidden');
-                        foto.src = '';
-                        fotoData = '';
-                    }
-
-                    submitFormBtn.textContent = 'Atualizar Acesso'; // Change button text
-                    cancelEditBtn.classList.remove('hidden'); // Show cancel edit button
+                if (acessoToEdit.foto) {
+                    foto.src = acessoToEdit.foto;
+                    foto.classList.remove('hidden');
+                    fotoData = acessoToEdit.foto;
+                } else {
+                    foto.classList.add('hidden');
+                    foto.src = '';
+                    fotoData = '';
                 }
+
+                submitFormBtn.textContent = 'Atualizar Acesso'; // Change button text
+                cancelEditBtn.classList.remove('hidden'); // Show cancel edit button
             }
             // Excluir
-            if (e.target.classList.contains('btn-excluir')) {
-                const idx = e.target.getAttribute('data-index');
+            if (e.target.classList.contains('btn-excluir') && foundIndex !== -1) {
                 showModalMessage('Tem certeza que deseja excluir este acesso? Esta ação é irreversível.', 'confirm', () => {
-                    let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                    acessosSalvos.splice(idx, 1); // Remove item at index
+                    acessosSalvos.splice(foundIndex, 1); // Remove item at the found index
                     localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
                     atualizarAcessos();
                     showModalMessage('Acesso excluído com sucesso!');
@@ -582,7 +595,7 @@
                 });
             }
             // Ampliar foto ao clicar
-            if (e.target.tagName === 'IMG' && e.target.alt === 'Foto do prestador') {
+            if (e.target.tagName === 'IMG' && clickedImgId) { // Check for data-ampliar attribute
                 const overlay = document.createElement('div');
                 overlay.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
                 const img = document.createElement('img');
@@ -704,8 +717,10 @@
                 // Auto-fill form fields if exact document match found
                 if (termo) {
                     const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                    const encontrado = acessosSalvos.find(a => a.documento.toLowerCase() === termo);
+                    const encontrado = acessosSalvos.find(a => a.documento && a.documento.toLowerCase() === termo);
                     if (encontrado) {
+                        showScreen('formScreen'); // Switch to form to show populated fields
+                        editingId = encontrado.id; // Set editing ID for found item
                         document.getElementById('apartamento').value = encontrado.apartamento || '';
                         document.getElementById('nome').value = encontrado.nome || '';
                         document.getElementById('documento').value = encontrado.documento || '';
@@ -725,8 +740,10 @@
                             foto.src = '';
                             fotoData = '';
                         }
+                        submitFormBtn.textContent = 'Atualizar Acesso';
+                        cancelEditBtn.classList.remove('hidden');
                     } else {
-                        showModalMessage('Nenhum registro encontrado com o documento ou nome exato para preencher o formulário.');
+                        showModalMessage('Nenhum registro encontrado com o documento exato para preencher o formulário.');
                     }
                 }
             };
