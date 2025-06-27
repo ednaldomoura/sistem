@@ -54,6 +54,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
+            max-width: 90%; /* Ensure modal is responsive */
         }
         /* Style for active navigation button */
         .nav-button.active {
@@ -155,9 +156,12 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-center mt-6">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <button type="submit" id="submitFormBtn" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
                             Registrar Acesso
+                        </button>
+                        <button type="button" id="cancelEditBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hidden transform transition duration-300 hover:scale-105">
+                            Cancelar Edição
                         </button>
                     </div>
                 </form>
@@ -226,7 +230,7 @@
 
     <script>
         // Função para exibir mensagens modais em vez de alert()
-        function showModalMessage(message, type = 'info') {
+        function showModalMessage(message, type = 'info', onConfirm = null, onCancel = null) {
             const existingModal = document.querySelector('.modal-overlay');
             if (existingModal) existingModal.remove();
 
@@ -240,13 +244,38 @@
             messageParagraph.textContent = message;
             messageParagraph.className = 'text-lg font-semibold mb-4';
 
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'OK';
-            closeButton.className = 'bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg';
-            closeButton.onclick = () => overlay.remove();
-
             modalContent.appendChild(messageParagraph);
-            modalContent.appendChild(closeButton);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'flex justify-center gap-4 mt-4';
+
+            if (onConfirm) {
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'Confirmar';
+                confirmButton.className = 'bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg';
+                confirmButton.onclick = () => {
+                    overlay.remove();
+                    onConfirm();
+                };
+                buttonContainer.appendChild(confirmButton);
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancelar';
+                cancelButton.className = 'bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg';
+                cancelButton.onclick = () => {
+                    overlay.remove();
+                    if (onCancel) onCancel();
+                };
+                buttonContainer.appendChild(cancelButton);
+            } else {
+                const closeButton = document.createElement('button');
+                closeButton.textContent = 'OK';
+                closeButton.className = 'bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg';
+                closeButton.onclick = () => overlay.remove();
+                buttonContainer.appendChild(closeButton);
+            }
+
+            modalContent.appendChild(buttonContainer);
             overlay.appendChild(modalContent);
             document.body.appendChild(overlay);
         }
@@ -259,9 +288,13 @@
         const tirarFotoBtn = document.getElementById('tirarFoto');
         const btnAbrirFoto = document.getElementById('btnAbrirFoto');
         const inputFotoArquivo = document.getElementById('inputFotoArquivo');
+        const submitFormBtn = document.getElementById('submitFormBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+
         let stream = null;
         let fotoData = '';
         let cameraFacingMode = 'user'; // default to front camera
+        let editingIndex = -1; // -1 means no editing, otherwise it's the index of the item being edited
 
         // Screen elements
         const formScreen = document.getElementById('formScreen');
@@ -270,16 +303,18 @@
         const showReportBtn = document.getElementById('showReportBtn');
         const navButtons = document.querySelectorAll('.nav-button');
 
-        // Initial setup for current date and time
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
-        const hh = String(now.getHours()).padStart(2, '0');
-        const min = String(now.getMinutes()).padStart(2, '0');
+        // Function to set current date and time
+        function setCurrentDateTime() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
 
-        document.getElementById('dataEntrada').value = `${yyyy}-${mm}-${dd}`;
-        document.getElementById('horaEntrada').value = `${hh}:${min}`;
+            document.getElementById('dataEntrada').value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('horaEntrada').value = `${hh}:${min}`;
+        }
 
         // Function to update access records display
         function atualizarAcessos(filtro = '') {
@@ -314,9 +349,13 @@
                             <strong>Empresa:</strong> ${acesso.empresa || 'N/A'}<br>
                             <strong>Serviço:</strong> ${acesso.servico || 'N/A'}${status}
                         </div>
-                        <div class="flex flex-col items-center gap-2">
+                        <div class="flex flex-col items-center justify-center gap-2 mt-2 md:mt-0">
                             ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${idx}" />` : ''}
-                            <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-index="${idx}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
+                            <div class="flex flex-wrap justify-center gap-2 mt-2">
+                                <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-index="${idx}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
+                                <button class="btn-editar bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${idx}">Editar</button>
+                                <button class="btn-excluir bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${idx}">Excluir</button>
+                            </div>
                         </div>
                     `;
                     acessosDiv.appendChild(div);
@@ -407,6 +446,24 @@
             };
         }
 
+        // Function to clear the form and reset state
+        function clearFormAndResetState() {
+            form.reset();
+            foto.classList.add('hidden');
+            foto.src = '';
+            fotoData = '';
+            abrirCameraBtn.classList.remove('hidden');
+            tirarFotoBtn.classList.add('hidden');
+            video.classList.add('hidden');
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            editingIndex = -1; // Reset editing state
+            submitFormBtn.textContent = 'Registrar Acesso'; // Revert button text
+            cancelEditBtn.classList.add('hidden'); // Hide cancel button
+            setCurrentDateTime(); // Set current date and time for new entry
+        }
+
         // Form submission
         const form = document.getElementById('acessoForm');
         form.onsubmit = function(e) {
@@ -423,48 +480,99 @@
                 empresa: document.getElementById('empresa').value || '',
                 servico: document.getElementById('servico').value || '',
                 foto: fotoData,
-                baixado: false
+                baixado: false // New records are not "baixado" by default
             };
 
-            const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-            acessosSalvos.push(acesso);
-            localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
-            atualizarAcessos(); // Update report view after submission
-            form.reset();
-            // Reset photo and camera state
-            foto.classList.add('hidden');
-            foto.src = '';
-            fotoData = '';
-            abrirCameraBtn.classList.remove('hidden'); // Show open camera button
-            tirarFotoBtn.classList.add('hidden'); // Hide take photo button
-            video.classList.add('hidden'); // Hide video feed
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+
+            if (editingIndex !== -1) {
+                // Update existing record
+                acessosSalvos[editingIndex] = { ...acessosSalvos[editingIndex], ...acesso }; // Merge to preserve baixado status if not explicitly set
+                showModalMessage('Acesso atualizado com sucesso!');
+            } else {
+                // Add new record
+                acessosSalvos.push(acesso);
+                showModalMessage('Acesso registrado com sucesso!');
             }
-            showModalMessage('Acesso registrado com sucesso!');
+            localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+            atualizarAcessos(); // Update report view
+            clearFormAndResetState(); // Clear form and reset state
         };
 
-        // Delegated event listener for "Dar Baixa" and photo amplification
+        // Delegated event listener for "Dar Baixa", "Editar", "Excluir" and photo amplification
         const acessosDiv = document.getElementById('acessos');
         acessosDiv.addEventListener('click', function(e) {
+            // Dar Baixa
             if (e.target.classList.contains('btn-baixa-individual')) {
                 const idx = e.target.getAttribute('data-index');
                 let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos[idx]) {
-                    acessosSalvos[idx].baixado = true;
-                    // Automatically fill dataSaida and horaSaida
-                    const agora = new Date();
-                    const yyyyNow = agora.getFullYear();
-                    const mmNow = String(agora.getMonth() + 1).padStart(2, '0');
-                    const ddNow = String(agora.getDate()).padStart(2, '0');
-                    const hhNow = String(agora.getHours()).padStart(2, '0');
-                    const minNow = String(agora.getMinutes()).padStart(2, '0');
-                    acessosSalvos[idx].dataSaida = `${yyyyNow}-${mmNow}-${ddNow}`;
-                    acessosSalvos[idx].horaSaida = `${hhNow}:${minNow}`;
+                if (acessosSalvos[idx] && !acessosSalvos[idx].baixado) { // Only allow if not already baixado
+                    showModalMessage('Tem certeza que deseja dar baixa neste acesso?', 'confirm', () => {
+                        acessosSalvos[idx].baixado = true;
+                        // Automatically fill dataSaida and horaSaida
+                        const agora = new Date();
+                        const yyyyNow = agora.getFullYear();
+                        const mmNow = String(agora.getMonth() + 1).padStart(2, '0');
+                        const ddNow = String(agora.getDate()).padStart(2, '0');
+                        const hhNow = String(agora.getHours()).padStart(2, '0');
+                        const minNow = String(agora.getMinutes()).padStart(2, '0');
+                        acessosSalvos[idx].dataSaida = `${yyyyNow}-${mmNow}-${ddNow}`;
+                        acessosSalvos[idx].horaSaida = `${hhNow}:${minNow}`;
+                        localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+                        atualizarAcessos();
+                        showModalMessage('Acesso baixado com sucesso!');
+                    });
+                } else if (acessosSalvos[idx].baixado) {
+                    showModalMessage('Este acesso já foi baixado.');
+                }
+            }
+            // Editar
+            if (e.target.classList.contains('btn-editar')) {
+                const idx = e.target.getAttribute('data-index');
+                let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                const acessoToEdit = acessosSalvos[idx];
+
+                if (acessoToEdit) {
+                    showScreen('formScreen'); // Switch to form screen
+                    editingIndex = idx; // Set editing index
+
+                    // Populate form fields
+                    document.getElementById('apartamento').value = acessoToEdit.apartamento || '';
+                    document.getElementById('nome').value = acessoToEdit.nome || '';
+                    document.getElementById('documento').value = acessoToEdit.documento || '';
+                    document.getElementById('autorizou').value = acessoToEdit.autorizou || '';
+                    document.getElementById('dataEntrada').value = acessoToEdit.dataEntrada || '';
+                    document.getElementById('horaEntrada').value = acessoToEdit.horaEntrada || '';
+                    document.getElementById('dataSaida').value = acessoToEdit.dataSaida || '';
+                    document.getElementById('horaSaida').value = acessoToEdit.horaSaida || '';
+                    document.getElementById('empresa').value = acessoToEdit.empresa || '';
+                    document.getElementById('servico').value = acessoToEdit.servico || '';
+
+                    if (acessoToEdit.foto) {
+                        foto.src = acessoToEdit.foto;
+                        foto.classList.remove('hidden');
+                        fotoData = acessoToEdit.foto;
+                    } else {
+                        foto.classList.add('hidden');
+                        foto.src = '';
+                        fotoData = '';
+                    }
+
+                    submitFormBtn.textContent = 'Atualizar Acesso'; // Change button text
+                    cancelEditBtn.classList.remove('hidden'); // Show cancel edit button
+                }
+            }
+            // Excluir
+            if (e.target.classList.contains('btn-excluir')) {
+                const idx = e.target.getAttribute('data-index');
+                showModalMessage('Tem certeza que deseja excluir este acesso? Esta ação é irreversível.', 'confirm', () => {
+                    let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                    acessosSalvos.splice(idx, 1); // Remove item at index
                     localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
                     atualizarAcessos();
-                    showModalMessage('Acesso baixado com sucesso!');
-                }
+                    showModalMessage('Acesso excluído com sucesso!');
+                    clearFormAndResetState(); // Clear form in case it was being edited
+                });
             }
             // Ampliar foto ao clicar
             if (e.target.tagName === 'IMG' && e.target.alt === 'Foto do prestador') {
@@ -472,12 +580,15 @@
                 overlay.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
                 const img = document.createElement('img');
                 img.src = e.target.src;
-                img.className = 'max-w-full max-h-[90vh] md:max-w-3xl md:max-h-[80vh] rounded-lg border-8 border-white shadow-2xl object-contain'; // Adjusted for better responsiveness
+                img.className = 'max-w-full max-h-[90vh] md:max-w-3xl md:max-h-[80vh] rounded-lg border-8 border-white shadow-2xl object-contain';
                 overlay.appendChild(img);
                 overlay.onclick = function() { document.body.removeChild(overlay); };
                 document.body.appendChild(overlay);
             }
         });
+
+        // Cancel Edit button handler
+        cancelEditBtn.addEventListener('click', clearFormAndResetState);
 
         // Export to CSV
         const btnRelatorio = document.getElementById('btnRelatorio');
@@ -588,13 +699,13 @@
                     const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
                     const encontrado = acessosSalvos.find(a => a.documento.toLowerCase() === termo);
                     if (encontrado) {
-                        document.getElementById('apartamento').value = encontrado.apartamento;
-                        document.getElementById('nome').value = encontrado.nome;
-                        document.getElementById('documento').value = encontrado.documento;
-                        document.getElementById('autorizou').value = encontrado.autorizou;
-                        document.getElementById('dataEntrada').value = encontrado.dataEntrada;
-                        document.getElementById('horaEntrada').value = encontrado.horaEntrada;
-                        document.getElementById('dataSaida').value = encontrado.dataSaida || ''; // Ensure empty string for optional fields
+                        document.getElementById('apartamento').value = encontrado.apartamento || '';
+                        document.getElementById('nome').value = encontrado.nome || '';
+                        document.getElementById('documento').value = encontrado.documento || '';
+                        document.getElementById('autorizou').value = encontrado.autorizou || '';
+                        document.getElementById('dataEntrada').value = encontrado.dataEntrada || '';
+                        document.getElementById('horaEntrada').value = encontrado.horaEntrada || '';
+                        document.getElementById('dataSaida').value = encontrado.dataSaida || '';
                         document.getElementById('horaSaida').value = encontrado.horaSaida || '';
                         document.getElementById('empresa').value = encontrado.empresa || '';
                         document.getElementById('servico').value = encontrado.servico || '';
@@ -617,11 +728,7 @@
             btnLimparBusca.onclick = function() {
                 buscaInput.value = '';
                 atualizarAcessos();
-                // Optionally clear form fields when clearing search
-                form.reset();
-                foto.classList.add('hidden');
-                foto.src = '';
-                fotoData = '';
+                clearFormAndResetState(); // Clear form when clearing search
             };
         }
 
@@ -655,8 +762,10 @@
                         <div class="modal-content">
                             <p class="text-lg font-semibold mb-4">Digite o e-mail de destino para enviar o PDF:</p>
                             <input type="email" id="emailInput" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="seuemail@exemplo.com" />
-                            <button id="sendEmailConfirmBtn" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg mr-2">Enviar</button>
-                            <button id="cancelEmailBtn" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                            <div class="flex justify-center gap-4 mt-4">
+                                <button id="sendEmailConfirmBtn" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg">Enviar</button>
+                                <button id="cancelEmailBtn" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                            </div>
                         </div>
                     `;
                     document.body.appendChild(emailPromptModal);
@@ -696,16 +805,7 @@
         // Initial load: show form screen and update current date/time
         window.onload = function() {
             showScreen('formScreen');
-            // Set current date and time on load
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const hours = String(today.getHours()).padStart(2, '0');
-            const minutes = String(today.getMinutes()).padStart(2, '0');
-
-            document.getElementById('dataEntrada').value = `${year}-${month}-${day}`;
-            document.getElementById('horaEntrada').value = `${hours}:${minutes}`;
+            setCurrentDateTime(); // Set current date and time on load
         };
     </script>
 </body>
