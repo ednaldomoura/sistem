@@ -52,10 +52,6 @@ function atualizarAcessos(filtro = '') {
   });
 }
 
-window.onload = function() {
-  atualizarAcessos();
-};
-
 const cameraOptionsDiv = document.createElement('div');
 cameraOptionsDiv.className = 'flex gap-2 mb-2';
 const btnFrontal = document.createElement('button');
@@ -142,6 +138,11 @@ if (btnAbrirFoto && inputFotoArquivo && foto) {
     }
   };
 }
+
+// Sobrescreve window.onload para buscar do Google Sheets
+window.onload = function() {
+  atualizarAcessos();
+};
 
 // Função para registrar acesso
 const form = document.getElementById('acessoForm');

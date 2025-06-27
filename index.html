@@ -1,86 +1,712 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Acesso - Prestadores de Serviço</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Acessos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        /* Custom styles for video and canvas to ensure responsiveness */
+        #video, #canvas, #foto {
+            width: 100%;
+            height: auto;
+            max-width: 320px; /* Max width for camera feed/photo */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow */
+            object-fit: cover; /* Ensures video/image covers the area */
+        }
+        .hidden {
+            display: none;
+        }
+        .acesso-item img {
+            transition: transform 0.2s ease-in-out;
+        }
+        .acesso-item img:hover {
+            transform: scale(1.05);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        /* Style for active navigation button */
+        .nav-button.active {
+            background-color: #1d4ed8; /* Darker blue for active state */
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-400 to-green-200 min-h-screen flex items-center justify-center">
-  <div class="container w-full max-w-xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 my-4 sm:my-8 mx-2 sm:mx-0">
-    <h1 class="text-xl sm:text-2xl font-bold text-blue-700 text-center mb-6 sm:mb-8">Controle de Acesso - Prestadores de Serviço</h1>
-    <form id="acessoForm" class="space-y-3 sm:space-y-4">
-      <div>
-        <label class="block font-medium text-gray-700">Apartamento:</label>
-        <input type="text" id="apartamento" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Nome:</label>
-        <input type="text" id="nome" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Documento:</label>
-        <input type="text" id="documento" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Quem autorizou:</label>
-        <input type="text" id="autorizou" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
-        <div class="flex-1">
-          <label class="block font-medium text-gray-700">Data Entrada:</label>
-          <input type="date" id="dataEntrada" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-3xl font-bold">Sistema de Controle de Acessos</h1>
+            <nav class="flex gap-4">
+                <button id="showFormBtn" class="nav-button bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow active">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                        <path d="M11.644 19.34c.002.327-.008.653-.021.976a4.878 4.878 0 01-1.002 2.658c-.378.41-.813.805-1.285 1.18-.303.242-.58.426-.757.518-.087.042-.162.063-.231.077a.752.752 0 01-.19.018 2.22 2.22 0 01-.144-.021.75.75 0 01-.137-.027c-.12-.036-.24-.093-.362-.163a.75.75 0 01-.22-.128c-.147-.11-.291-.233-.428-.372a2.072 2.072 0 01-.219-.24c-.113-.12-.22-.24-.316-.364a.75.75 0 01-.177-.282c-.066-.14-.12-.284-.162-.432a.75.75 0 01-.11-.322c-.027-.13-.04-.26-.046-.39-.006-.065-.008-.13-.008-.194v-3.75l-4.72-2.883a.75.75 0 01.12-1.395l5.22-2.61a.75.75 0 00.32-.821c-.347-1.11-.921-2.22-1.724-3.235a.75.75 0 01.597-1.272l.465.093c.895.178 1.593.484 2.052.793.09.06.18.125.27.195a.75.75 0 001.07-.105c.44-.55.836-1.127 1.18-1.745a.75.75 0 011.198-.168l.418.334a.75.75 0 00.93.076c.435-.306.84-.61 1.21-.908.28-.225.54-.436.786-.632a.75.75 0 011.082.028c1.01.996 1.802 2.062 2.378 3.195a.75.75 0 01-.223.978l-5.808 3.992c-.055.038-.112.07-.17.098a.75.75 0 00-.317.803c.312 1.258.913 2.458 1.76 3.513a.75.75 0 01-.06.945l-1.385 1.545a.75.75 0 00-.18.258c-.343.69-.64 1.393-.893 2.115a.75.75 0 01-1.086.297zM12 2.25c-1.892 0-3.792.148-5.385.583-.497.135-.85.556-.85.556a.75.75 0 00-.174.457l-.767 6.333c-.046.39-.33.722-.712.871l-2.096.843a.75.75 0 01-.735-1.396l2.096-.843c.29-.116.51-.38.572-.692l.766-6.332C6.883 2.535 9.362 2.25 12 2.25z" />
+                    </svg>
+                    Registrar Acesso
+                </button>
+                <button id="showReportBtn" class="nav-button bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                        <path fill-rule="evenodd" d="M12 1.5a.75.75 0 01.75.75V4.5a.75.75 0 01-1.5 0V2.25A.75.75 0 0112 1.5zM8.667 3.75A.75.75 0 019.417 3h5.166a.75.75 0 01.75.75V7.5h-6.666V3.75zM8.25 9.75A.75.75 0 019 9h6a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5H9v1.5a.75.75 0 01-1.5 0v-1.5zM12 21a.75.75 0 01-.75-.75V19.5a.75.75 0 011.5 0v.75a.75.75 0 01-.75.75zM15.333 16.5A.75.75 0 0114.583 17H9.417a.75.75 0 01-.75-.75v-3.75h6.666v3.75zM7.5 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5H8.25A.75.75 0 017.5 12zM15.75 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM20.25 15a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM3 15a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5H3.75A.75.75 0 013 15zM20.25 10.5a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM3 10.5a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5H3.75A.75.75 0 013 10.5z" clip-rule="evenodd" />
+                    </svg>
+                    Relatório
+                </button>
+            </nav>
         </div>
-        <div class="flex-1">
-          <label class="block font-medium text-gray-700">Hora Entrada:</label>
-          <input type="time" id="horaEntrada" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-        </div>
-      </div>
-      <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
-        <div class="flex-1">
-          <label class="block font-medium text-gray-700">Data Saída:</label>
-          <input type="date" id="dataSaida" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-        </div>
-        <div class="flex-1">
-          <label class="block font-medium text-gray-700">Hora Saída:</label>
-          <input type="time" id="horaSaida" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-        </div>
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Empresa:</label>
-        <input type="text" id="empresa" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Serviço:</label>
-        <input type="text" id="servico" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm sm:text-base" />
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Foto:</label>
-        <div class="flex flex-col sm:flex-row items-center gap-2 mt-1">
-          <video id="video" width="120" height="90" autoplay class="rounded-lg border border-gray-300 hidden"></video>
-          <canvas id="canvas" width="120" height="90" class="hidden"></canvas>
-          <img id="foto" src="" alt="Foto do prestador" class="rounded-lg border border-gray-300 hidden cursor-pointer max-w-[120px] max-h-[90px]" />
-        </div>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <button type="button" id="abrirCamera" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1 rounded text-sm">Abrir Câmera</button>
-          <button type="button" id="tirarFoto" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded text-sm hidden">Tirar Foto</button>
-          <button type="button" id="btnAbrirFoto" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-3 py-1 rounded text-sm">Abrir Arquivo de Foto</button>
-          <input type="file" id="inputFotoArquivo" accept="image/*" class="hidden" />
-        </div>
-      </div>
-      <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-green-400 hover:from-blue-700 hover:to-green-500 text-white font-bold py-2 rounded-lg shadow mt-4 text-base sm:text-lg">Registrar Acesso</button>
-    </form>
-    <div id="acessos" class="mt-8"></div>
-    <div class="flex flex-wrap gap-2 justify-center mt-6">
-      <button type="button" id="btnRelatorio" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Exportar CSV</button>
-      <button type="button" id="btnExportarPDF" class="bg-red-500 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Exportar PDF</button>
-      <button type="button" id="btnEnviarEmail" class="bg-purple-600 hover:bg-purple-800 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Enviar PDF por Email</button>
-      <button type="button" id="btnExportarArquivo" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Arquivo</button>
-      <input type="text" id="buscaInput" placeholder="Buscar por nome ou documento" class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 text-sm sm:text-base" />
-      <button type="button" id="btnBuscar" class="bg-green-500 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Buscar</button>
-      <button type="button" id="btnLimparBusca" class="bg-gray-400 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded text-sm sm:text-base">Limpar Busca</button>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    </header>
+
+    <main class="flex-1 p-4">
+        <!-- Form Screen -->
+        <section id="formScreen" class="flex flex-col items-center justify-center min-h-[calc(100vh-100px)]">
+            <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+                <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Registrar Novo Acesso</h2>
+                <form id="acessoForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="apartamento" class="block text-sm font-medium text-gray-700">Apartamento:</label>
+                            <input type="text" id="apartamento" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="nome" class="block text-sm font-medium text-gray-700">Nome:</label>
+                            <input type="text" id="nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="documento" class="block text-sm font-medium text-gray-700">Documento:</label>
+                            <input type="text" id="documento" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="autorizou" class="block text-sm font-medium text-gray-700">Quem Autorizou:</label>
+                            <input type="text" id="autorizou" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="dataEntrada" class="block text-sm font-medium text-gray-700">Data Entrada:</label>
+                            <input type="date" id="dataEntrada" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="horaEntrada" class="block text-sm font-medium text-gray-700">Hora Entrada:</label>
+                            <input type="time" id="horaEntrada" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="dataSaida" class="block text-sm font-medium text-gray-700">Data Saída (Opcional):</label>
+                            <input type="date" id="dataSaida" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="horaSaida" class="block text-sm font-medium text-gray-700">Hora Saída (Opcional):</label>
+                            <input type="time" id="horaSaida" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="empresa" class="block text-sm font-medium text-gray-700">Empresa:</label>
+                            <input type="text" id="empresa" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="servico" class="block text-sm font-medium text-gray-700">Serviço:</label>
+                            <input type="text" id="servico" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center mt-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto do Prestador:</label>
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" id="btnCameraFront" class="bg-blue-400 hover:bg-blue-600 text-white font-semibold px-2 py-1 rounded text-xs shadow-md">Câmera Frontal</button>
+                            <button type="button" id="btnCameraBack" class="bg-green-400 hover:bg-green-600 text-white font-semibold px-2 py-1 rounded text-xs shadow-md">Câmera Traseira</button>
+                        </div>
+                        <video id="video" class="hidden rounded-lg shadow-md mb-2" autoplay></video>
+                        <canvas id="canvas" class="hidden"></canvas>
+                        <img id="foto" class="hidden rounded-lg shadow-md mb-2" alt="Foto do prestador">
+                        <div class="flex space-x-2 mt-2">
+                            <button type="button" id="abrirCamera" class="bg-purple-500 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                                Abrir Câmera
+                            </button>
+                            <button type="button" id="tirarFoto" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg hidden shadow-md">
+                                Tirar Foto
+                            </button>
+                            <button type="button" id="btnAbrirFoto" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                                Carregar Foto
+                            </button>
+                            <input type="file" id="inputFotoArquivo" accept="image/*" class="hidden">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+                            Registrar Acesso
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Report Screen -->
+        <section id="reportScreen" class="hidden p-4">
+            <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Relatório de Acessos</h2>
+
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="flex-grow flex gap-2">
+                        <input type="text" id="buscaInput" placeholder="Buscar por nome ou documento..." class="flex-grow mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+                        <button id="btnBuscar" class="bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.694 4.693a.75.75 0 11-1.06 1.06l-4.693-4.694A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
+                            </svg>
+                            Buscar
+                        </button>
+                        <button id="btnLimparBusca" class="bg-gray-400 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path fill-rule="evenodd" d="M16.5 4.5V2.25a.75.75 0 00-1.5 0V4.5H9.75V2.25a.75.75 0 00-1.5 0V4.5H6a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 006 19.5h12a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0018 4.5h-1.5zm-9 12.75a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H7.508a.75.75 0 01-.75-.75v-.008zm4.5 0a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008zm4.5 0a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008zm2.25-10.5a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75H18a.75.75 0 00.75-.75V6.75a.75.75 0 00-.75-.75h-.008zM12 6a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V6.75a.75.75 0 00-.75-.75H12zM7.5 6a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V6.75a.75.75 0 00-.75-.75H7.5z" clip-rule="evenodd" />
+                            </svg>
+                            Limpar
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btnRelatorio" class="bg-orange-500 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                            </svg>
+                            Exportar CSV
+                        </button>
+                        <button id="btnExportarPDF" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path d="M1.5 8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 007.29 13.5H9.5a.75.75 0 000-1.5H7.29a1.5 1.5 0 01-1.402-1.026l-.272-1.552a.75.75 0 01.107-.638l.454-.605A1.5 1.5 0 016.372 7.5H9.75a.75.75 0 010 1.5H6.372a.75.75 0 00-.671.408l-.16.32V18a.75.75 0 00.75.75h11.25a.75.75 0 00.75-.75V8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 0021.29 13.5H23.5a.75.75 0 000-1.5h-2.21c-.516 0-.966-.351-1.054-.854l-.272-1.552a.75.75 0 01-.107-.638l-.454-.605A1.5 1.5 0 0117.628 7.5H14.25a.75.75 0 010-1.5h3.372c.862 0 1.676.435 2.158 1.16l.454.605c.34.453.339 1.077-.008 1.53L21.094 9H21.75a.75.75 0 010 1.5h-.622l.272 1.552c.088.503-.362.854-.878.854H18a.75.75 0 000 1.5h.75a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75V8.25zM6 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM12 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM18 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" />
+                            </svg>
+                            Exportar PDF
+                        </button>
+                        <button id="btnExportarArquivo" class="bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path fill-rule="evenodd" d="M12.75 12.75a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06l-6.97-6.97V21a.75.75 0 01-1.5 0V14.84l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5a.75.75 0 010-1.06zM6 5.25a2.25 2.25 0 012.25-2.25h3a.75.75 0 000-1.5h-3A3.75 3.75 0 004.5 5.25v3a.75.75 0 001.5 0v-3zm12 0a2.25 2.25 0 00-2.25-2.25h-3a.75.75 0 000 1.5h3A.75.75 0 0018 5.25v3a.75.75 0 001.5 0v-3z" clip-rule="evenodd" />
+                            </svg>
+                            Exportar JSON
+                        </button>
+                        <button id="btnEnviarEmail" class="bg-blue-400 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
+                                <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.58 4.78a3 3 0 01-2.84 0L1.5 8.67z" />
+                                <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.408a2.25 2.25 0 002.172 0L22.5 6.908z" />
+                            </svg>
+                            Enviar PDF por Email
+                        </button>
+                    </div>
+                </div>
+
+                <div id="acessos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Access records will be loaded here -->
+                </div>
+                <div id="noRecordsMessage" class="text-center text-gray-500 italic mt-8 hidden">
+                    Nenhum registro encontrado.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Função para exibir mensagens modais em vez de alert()
+        function showModalMessage(message, type = 'info') {
+            const existingModal = document.querySelector('.modal-overlay');
+            if (existingModal) existingModal.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+
+            const messageParagraph = document.createElement('p');
+            messageParagraph.textContent = message;
+            messageParagraph.className = 'text-lg font-semibold mb-4';
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'OK';
+            closeButton.className = 'bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg';
+            closeButton.onclick = () => overlay.remove();
+
+            modalContent.appendChild(messageParagraph);
+            modalContent.appendChild(closeButton);
+            overlay.appendChild(modalContent);
+            document.body.appendChild(overlay);
+        }
+
+        // DOM elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const foto = document.getElementById('foto');
+        const abrirCameraBtn = document.getElementById('abrirCamera');
+        const tirarFotoBtn = document.getElementById('tirarFoto');
+        const btnAbrirFoto = document.getElementById('btnAbrirFoto');
+        const inputFotoArquivo = document.getElementById('inputFotoArquivo');
+        let stream = null;
+        let fotoData = '';
+        let cameraFacingMode = 'user'; // default to front camera
+
+        // Screen elements
+        const formScreen = document.getElementById('formScreen');
+        const reportScreen = document.getElementById('reportScreen');
+        const showFormBtn = document.getElementById('showFormBtn');
+        const showReportBtn = document.getElementById('showReportBtn');
+        const navButtons = document.querySelectorAll('.nav-button');
+
+        // Initial setup for current date and time
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+
+        document.getElementById('dataEntrada').value = `${yyyy}-${mm}-${dd}`;
+        document.getElementById('horaEntrada').value = `${hh}:${min}`;
+
+        // Function to update access records display
+        function atualizarAcessos(filtro = '') {
+            const acessosDiv = document.getElementById('acessos');
+            const noRecordsMessage = document.getElementById('noRecordsMessage');
+            acessosDiv.innerHTML = '';
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+
+            if (filtro) {
+                const termo = filtro.trim().toLowerCase();
+                acessosSalvos = acessosSalvos.filter(a =>
+                    a.nome.toLowerCase().includes(termo) ||
+                    a.documento.toLowerCase().includes(termo) ||
+                    a.apartamento.toLowerCase().includes(termo)
+                );
+            }
+
+            if (acessosSalvos.length > 0) {
+                noRecordsMessage.classList.add('hidden');
+                acessosSalvos.forEach((acesso, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'acesso-item bg-gray-100 rounded-lg p-4 mb-4 shadow flex flex-col md:flex-row md:items-center gap-4 border border-gray-200';
+                    let status = acesso.baixado ? '<span class="text-green-700 font-bold ml-2">(Baixado)</span>' : '';
+                    div.innerHTML = `
+                        <div class="flex-1 text-gray-800">
+                            <strong>Apartamento:</strong> ${acesso.apartamento}<br>
+                            <strong>Nome:</strong> ${acesso.nome}<br>
+                            <strong>Documento:</strong> ${acesso.documento}<br>
+                            <strong>Quem autorizou:</strong> ${acesso.autorizou}<br>
+                            <strong>Entrada:</strong> ${acesso.dataEntrada} ${acesso.horaEntrada}<br>
+                            <strong>Saída:</strong> ${acesso.dataSaida || 'N/A'} ${acesso.horaSaida || 'N/A'}<br>
+                            <strong>Empresa:</strong> ${acesso.empresa || 'N/A'}<br>
+                            <strong>Serviço:</strong> ${acesso.servico || 'N/A'}${status}
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${idx}" />` : ''}
+                            <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-index="${idx}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
+                        </div>
+                    `;
+                    acessosDiv.appendChild(div);
+                });
+            } else {
+                noRecordsMessage.classList.remove('hidden');
+            }
+        }
+
+        // Camera control functions
+        async function abrirCameraComFacingMode(facingMode) {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } });
+                    video.srcObject = stream;
+                    video.classList.remove('hidden');
+                    tirarFotoBtn.classList.remove('hidden');
+                    abrirCameraBtn.classList.add('hidden');
+                    foto.classList.add('hidden');
+                    foto.src = ''; // Clear previous photo
+                    fotoData = ''; // Clear photo data
+                } catch (e) {
+                    showModalMessage('Não foi possível acessar a câmera: ' + e.message);
+                }
+            } else {
+                showModalMessage('Seu navegador não suporta a API de mídia para câmera.');
+            }
+        }
+
+        // Event listeners for camera buttons
+        document.getElementById('btnCameraFront').onclick = async function() {
+            cameraFacingMode = 'user';
+            await abrirCameraComFacingMode(cameraFacingMode);
+        };
+        document.getElementById('btnCameraBack').onclick = async function() {
+            cameraFacingMode = 'environment';
+            await abrirCameraComFacingMode(cameraFacingMode);
+        };
+
+        abrirCameraBtn.onclick = async function() {
+            cameraFacingMode = 'user'; // Default to front when "Open Camera" is clicked
+            await abrirCameraComFacingMode(cameraFacingMode);
+        };
+
+        tirarFotoBtn.onclick = function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            fotoData = canvas.toDataURL('image/png');
+            foto.src = fotoData;
+            foto.classList.remove('hidden');
+            video.classList.add('hidden');
+            tirarFotoBtn.classList.add('hidden');
+            abrirCameraBtn.classList.remove('hidden');
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+
+        // Button to open file explorer for photo upload
+        if (btnAbrirFoto && inputFotoArquivo && foto) {
+            btnAbrirFoto.onclick = function() {
+                inputFotoArquivo.click();
+            };
+            inputFotoArquivo.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        foto.src = evt.target.result;
+                        foto.classList.remove('hidden');
+                        fotoData = evt.target.result;
+                        // Hide camera related elements if a file is chosen
+                        video.classList.add('hidden');
+                        tirarFotoBtn.classList.add('hidden');
+                        abrirCameraBtn.classList.remove('hidden');
+                        if (stream) {
+                            stream.getTracks().forEach(track => track.stop());
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showModalMessage('Por favor, selecione um arquivo de imagem válido.');
+                }
+            };
+        }
+
+        // Form submission
+        const form = document.getElementById('acessoForm');
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const acesso = {
+                apartamento: document.getElementById('apartamento').value,
+                nome: document.getElementById('nome').value,
+                documento: document.getElementById('documento').value,
+                autorizou: document.getElementById('autorizou').value,
+                dataEntrada: document.getElementById('dataEntrada').value,
+                horaEntrada: document.getElementById('horaEntrada').value,
+                dataSaida: document.getElementById('dataSaida').value || '',
+                horaSaida: document.getElementById('horaSaida').value || '',
+                empresa: document.getElementById('empresa').value || '',
+                servico: document.getElementById('servico').value || '',
+                foto: fotoData,
+                baixado: false
+            };
+
+            const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            acessosSalvos.push(acesso);
+            localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+            atualizarAcessos(); // Update report view after submission
+            form.reset();
+            // Reset photo and camera state
+            foto.classList.add('hidden');
+            foto.src = '';
+            fotoData = '';
+            abrirCameraBtn.classList.remove('hidden'); // Show open camera button
+            tirarFotoBtn.classList.add('hidden'); // Hide take photo button
+            video.classList.add('hidden'); // Hide video feed
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            showModalMessage('Acesso registrado com sucesso!');
+        };
+
+        // Delegated event listener for "Dar Baixa" and photo amplification
+        const acessosDiv = document.getElementById('acessos');
+        acessosDiv.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-baixa-individual')) {
+                const idx = e.target.getAttribute('data-index');
+                let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                if (acessosSalvos[idx]) {
+                    acessosSalvos[idx].baixado = true;
+                    // Automatically fill dataSaida and horaSaida
+                    const agora = new Date();
+                    const yyyyNow = agora.getFullYear();
+                    const mmNow = String(agora.getMonth() + 1).padStart(2, '0');
+                    const ddNow = String(agora.getDate()).padStart(2, '0');
+                    const hhNow = String(agora.getHours()).padStart(2, '0');
+                    const minNow = String(agora.getMinutes()).padStart(2, '0');
+                    acessosSalvos[idx].dataSaida = `${yyyyNow}-${mmNow}-${ddNow}`;
+                    acessosSalvos[idx].horaSaida = `${hhNow}:${minNow}`;
+                    localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+                    atualizarAcessos();
+                    showModalMessage('Acesso baixado com sucesso!');
+                }
+            }
+            // Ampliar foto ao clicar
+            if (e.target.tagName === 'IMG' && e.target.alt === 'Foto do prestador') {
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
+                const img = document.createElement('img');
+                img.src = e.target.src;
+                img.className = 'max-w-full max-h-[90vh] md:max-w-3xl md:max-h-[80vh] rounded-lg border-8 border-white shadow-2xl object-contain'; // Adjusted for better responsiveness
+                overlay.appendChild(img);
+                overlay.onclick = function() { document.body.removeChild(overlay); };
+                document.body.appendChild(overlay);
+            }
+        });
+
+        // Export to CSV
+        const btnRelatorio = document.getElementById('btnRelatorio');
+        if (btnRelatorio) {
+            btnRelatorio.onclick = function() {
+                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                if (acessosSalvos.length === 0) {
+                    showModalMessage('Nenhum registro para exportar!');
+                    return;
+                }
+                let csv = 'Apartamento,Nome,Documento,Quem autorizou,Data Entrada,Hora Entrada,Data Saída,Hora Saída,Empresa,Serviço,Baixado\n';
+                acessosSalvos.forEach(a => {
+                    csv += `"${a.apartamento || ''}","${a.nome || ''}","${a.documento || ''}","${a.autorizou || ''}","${a.dataEntrada || ''}","${a.horaEntrada || ''}","${a.dataSaida || ''}","${a.horaSaida || ''}","${a.empresa || ''}","${a.servico || ''}","${a.baixado ? 'Sim' : 'Não'}"\n`;
+                });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'relatorio_acessos.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showModalMessage('Relatório CSV exportado com sucesso!');
+            };
+        }
+
+        // Export to PDF
+        const btnExportarPDF = document.getElementById('btnExportarPDF');
+        if (btnExportarPDF) {
+            btnExportarPDF.onclick = function() {
+                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                if (acessosSalvos.length === 0) {
+                    showModalMessage('Nenhum registro para exportar!');
+                    return;
+                }
+                let win = window.open('', '_blank', 'width=900,height=700');
+                win.document.write('<html><head><title>Relatório de Acessos</title>');
+                win.document.write('<style>');
+                win.document.write('body{font-family:sans-serif; margin: 20px;}');
+                win.document.write('h2{text-align:center; color:#1e40af;}');
+                win.document.write('table{border-collapse:collapse;width:100%;margin-top:20px;}');
+                win.document.write('th,td{border:1px solid #ccc;padding:8px;text-align:left;}');
+                win.document.write('th{background:#e0e7ff; color:#1e40af; font-weight:bold;}');
+                win.document.write('tr:nth-child(even){background-color:#f9fafb;}');
+                win.document.write('img{max-width:80px; max-height:60px; object-fit:cover; border-radius:4px;}');
+                win.document.write('</style>');
+                win.document.write('</head><body>');
+                win.document.write('<h2>Relatório de Acessos</h2>');
+                win.document.write('<table><tr><th>Apartamento</th><th>Nome</th><th>Documento</th><th>Quem autorizou</th><th>Data Entrada</th><th>Hora Entrada</th><th>Data Saída</th><th>Hora Saída</th><th>Empresa</th><th>Serviço</th><th>Baixado</th><th>Foto</th></tr>');
+                acessosSalvos.forEach(a => {
+                    const fotoHtml = a.foto ? `<img src="${a.foto}" />` : 'N/A';
+                    win.document.write(`<tr>
+                        <td>${a.apartamento || ''}</td>
+                        <td>${a.nome || ''}</td>
+                        <td>${a.documento || ''}</td>
+                        <td>${a.autorizou || ''}</td>
+                        <td>${a.dataEntrada || ''}</td>
+                        <td>${a.horaEntrada || ''}</td>
+                        <td>${a.dataSaida || 'N/A'}</td>
+                        <td>${a.horaSaida || 'N/A'}</td>
+                        <td>${a.empresa || 'N/A'}</td>
+                        <td>${a.servico || 'N/A'}</td>
+                        <td>${a.baixado ? 'Sim' : 'Não'}</td>
+                        <td>${fotoHtml}</td>
+                    </tr>`);
+                });
+                win.document.write('</table></body></html>');
+                win.document.close();
+                win.print();
+            };
+        }
+
+        // Export to JSON
+        const btnExportarArquivo = document.getElementById('btnExportarArquivo');
+        if (btnExportarArquivo) {
+            btnExportarArquivo.onclick = function() {
+                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                if (acessosSalvos.length === 0) {
+                    showModalMessage('Nenhum registro para exportar!');
+                    return;
+                }
+                const blob = new Blob([JSON.stringify(acessosSalvos, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                // Also trigger download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'acessos.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showModalMessage('Dados exportados para JSON com sucesso!');
+            };
+        }
+
+        // Search functionality
+        const btnBuscar = document.getElementById('btnBuscar');
+        const btnLimparBusca = document.getElementById('btnLimparBusca');
+        const buscaInput = document.getElementById('buscaInput');
+
+        if (btnBuscar && buscaInput) {
+            btnBuscar.onclick = function() {
+                const termo = buscaInput.value.trim().toLowerCase();
+                atualizarAcessos(termo);
+                // Auto-fill form fields if exact document match found
+                if (termo) {
+                    const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                    const encontrado = acessosSalvos.find(a => a.documento.toLowerCase() === termo);
+                    if (encontrado) {
+                        document.getElementById('apartamento').value = encontrado.apartamento;
+                        document.getElementById('nome').value = encontrado.nome;
+                        document.getElementById('documento').value = encontrado.documento;
+                        document.getElementById('autorizou').value = encontrado.autorizou;
+                        document.getElementById('dataEntrada').value = encontrado.dataEntrada;
+                        document.getElementById('horaEntrada').value = encontrado.horaEntrada;
+                        document.getElementById('dataSaida').value = encontrado.dataSaida || ''; // Ensure empty string for optional fields
+                        document.getElementById('horaSaida').value = encontrado.horaSaida || '';
+                        document.getElementById('empresa').value = encontrado.empresa || '';
+                        document.getElementById('servico').value = encontrado.servico || '';
+                        if (encontrado.foto) {
+                            foto.src = encontrado.foto;
+                            foto.classList.remove('hidden');
+                            fotoData = encontrado.foto;
+                        } else {
+                            foto.classList.add('hidden');
+                            foto.src = '';
+                            fotoData = '';
+                        }
+                    } else {
+                        showModalMessage('Nenhum registro encontrado com o documento ou nome exato para preencher o formulário.');
+                    }
+                }
+            };
+        }
+        if (btnLimparBusca && buscaInput) {
+            btnLimparBusca.onclick = function() {
+                buscaInput.value = '';
+                atualizarAcessos();
+                // Optionally clear form fields when clearing search
+                form.reset();
+                foto.classList.add('hidden');
+                foto.src = '';
+                fotoData = '';
+            };
+        }
+
+        // Send PDF by Email (simulated)
+        const btnEnviarEmail = document.getElementById('btnEnviarEmail');
+        if (btnEnviarEmail) {
+            btnEnviarEmail.onclick = function() {
+                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+                if (acessosSalvos.length === 0) {
+                    showModalMessage('Nenhum registro para enviar!');
+                    return;
+                }
+                // Simulate PDF generation and then prompt for email
+                const win = window.open('', '_blank', 'width=900,height=700');
+                let html = '<h2>Relatório de Acessos</h2>';
+                html += '<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-family:sans-serif;">';
+                html += '<tr><th>Apartamento</th><th>Nome</th><th>Documento</th><th>Quem autorizou</th><th>Data Entrada</th><th>Hora Entrada</th><th>Data Saída</th><th>Hora Saída</th><th>Empresa</th><th>Serviço</th><th>Baixado</th></tr>';
+                acessosSalvos.forEach(a => {
+                    html += `<tr><td>${a.apartamento || ''}</td><td>${a.nome || ''}</td><td>${a.documento || ''}</td><td>${a.autorizou || ''}</td><td>${a.dataEntrada || ''}</td><td>${a.horaEntrada || ''}</td><td>${a.dataSaida || 'N/A'}</td><td>${a.horaSaida || 'N/A'}</td><td>${a.empresa || 'N/A'}</td><td>${a.servico || 'N/A'}</td><td>${a.baixado ? 'Sim' : 'Não'}</td></tr>`;
+                });
+                html += '</table>';
+                win.document.write('<html><head><title>Relatório de Acessos</title></head><body>' + html + '</body></html>');
+                win.document.close();
+
+                setTimeout(() => {
+                    win.print(); // Triggers print dialog which usually includes "Save as PDF"
+                    // Use a custom modal for user input instead of prompt
+                    const emailPromptModal = document.createElement('div');
+                    emailPromptModal.className = 'modal-overlay';
+                    emailPromptModal.innerHTML = `
+                        <div class="modal-content">
+                            <p class="text-lg font-semibold mb-4">Digite o e-mail de destino para enviar o PDF:</p>
+                            <input type="email" id="emailInput" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="seuemail@exemplo.com" />
+                            <button id="sendEmailConfirmBtn" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg mr-2">Enviar</button>
+                            <button id="cancelEmailBtn" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                        </div>
+                    `;
+                    document.body.appendChild(emailPromptModal);
+
+                    document.getElementById('sendEmailConfirmBtn').onclick = () => {
+                        const email = document.getElementById('emailInput').value;
+                        if (email) {
+                            showModalMessage('Para enviar o PDF por e-mail, anexe o arquivo PDF gerado ao e-mail manualmente.\n\nPor questões de segurança, o envio automático só é possível com integração de backend.');
+                        }
+                        emailPromptModal.remove();
+                    };
+                    document.getElementById('cancelEmailBtn').onclick = () => emailPromptModal.remove();
+
+                }, 500);
+            };
+        }
+
+        // Navigation functions
+        function showScreen(screenId) {
+            formScreen.classList.add('hidden');
+            reportScreen.classList.add('hidden');
+            document.getElementById(screenId).classList.remove('hidden');
+
+            navButtons.forEach(button => button.classList.remove('active'));
+            if (screenId === 'formScreen') {
+                showFormBtn.classList.add('active');
+            } else if (screenId === 'reportScreen') {
+                showReportBtn.classList.add('active');
+                atualizarAcessos(); // Refresh report data when navigating to report screen
+            }
+        }
+
+        // Event listeners for navigation buttons
+        showFormBtn.addEventListener('click', () => showScreen('formScreen'));
+        showReportBtn.addEventListener('click', () => showScreen('reportScreen'));
+
+        // Initial load: show form screen and update current date/time
+        window.onload = function() {
+            showScreen('formScreen');
+            // Set current date and time on load
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+
+            document.getElementById('dataEntrada').value = `${year}-${month}-${day}`;
+            document.getElementById('horaEntrada').value = `${hours}:${minutes}`;
+        };
+    </script>
 </body>
 </html>
