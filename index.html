@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Acessos</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -85,7 +83,6 @@
     </header>
 
     <main class="flex-1 p-4">
-        <!-- Form Screen -->
         <section id="formScreen" class="flex flex-col items-center justify-center min-h-[calc(100vh-100px)]">
             <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
                 <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Registrar Novo Acesso</h2>
@@ -168,7 +165,6 @@
             </div>
         </section>
 
-        <!-- Report Screen -->
         <section id="reportScreen" class="hidden p-4">
             <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-5xl mx-auto">
                 <h2 class="text-3xl font-bold text-center text-blue-800 mb-6">Relatório de Acessos</h2>
@@ -198,7 +194,7 @@
                         </button>
                         <button id="btnExportarPDF" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block align-middle mr-1">
-                                <path d="M1.5 8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 007.29 13.5H9.5a.75.75 0 000-1.5H7.29a1.5 1.5 0 01-1.402-1.026l-.272-1.552a.75.75 0 01.107-.638l.454-.605A1.5 1.5 0 016.372 7.5H9.75a.75.75 0 010 1.5H6.372a.75.75 0 00-.671.408l-.16.32V18a.75.75 0 00.75.75h11.25a.75.75 0 00.75-.75V8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 0021.29 13.5H23.5a.75.75 0 000-1.5h-2.21c-.516 0-.966-.351-1.054-.854l-.272-1.552a.75.75 0 01-.107-.638l-.454-.605A1.5 1.5 0 0117.628 7.5H14.25a.75.75 0 010-1.5h3.372c.862 0 1.676.435 2.158 1.16l.454.605c.34.453.339 1.077-.008 1.53L21.094 9H21.75a.75.75 0 010 1.5h-.622l.272 1.552c.088.503-.362.854-.878.854H18a.75.75 0 000 1.5h.75a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75V8.25zM6 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM12 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM18 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" />
+                                <path d="M1.5 8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 007.29 13.5H9.5a.75.75 0 000-1.5H7.29a1.5 1.5 0 01-1.402-1.026l-.272-1.552a.75.75 0 01.107-.638l.454-.605A1.5 1.5 0 016.372 7.5H9.75a.75.75 0 010 1.5H6.372a.75.75 0 00-.671.408l-.16.32V18a.75.75 0 00.75.75h11.25a.75.75 0 00.75-.75V8.25a.75.75 0 01.75-.75h1.372c.516 0 .966.351 1.054.854l.272 1.552A3 3 0 0021.29 13.5H23.5a.75.75 0 000-1.5h-2.21c-.516 0-.966-.351-1.054-.854l-.272-1.552a.75.75 0 01-.107-.638l-.454-.605A1.5 1.5 0 0117.628 7.5H14.25a.75.75 0 010 1.5h3.372c.862 0 1.676.435 2.158 1.16l.454.605c.34.453.339 1.077-.008 1.53L21.094 9H21.75a.75.75 0 010 1.5h-.622l.272 1.552c.088.503-.362.854-.878.854H18a.75.75 0 000 1.5h.75a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75V8.25zM6 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM12 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75zM18 10.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" />
                             </svg>
                             Exportar PDF
                         </button>
@@ -219,8 +215,7 @@
                 </div>
 
                 <div id="acessos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Access records will be loaded here -->
-                </div>
+                    </div>
                 <div id="noRecordsMessage" class="text-center text-gray-500 italic mt-8 hidden">
                     Nenhum registro encontrado.
                 </div>
@@ -294,7 +289,7 @@
         let stream = null;
         let fotoData = '';
         let cameraFacingMode = 'user'; // default to front camera
-        let editingId = -1; // Stores the ID of the item being edited, -1 means no editing
+        let editingIndex = -1; // -1 means no editing, otherwise it's the index of the item being edited
 
         // Screen elements
         const formScreen = document.getElementById('formScreen');
@@ -314,6 +309,9 @@
 
             document.getElementById('dataEntrada').value = `${year}-${month}-${day}`;
             document.getElementById('horaEntrada').value = `${hours}:${minutes}`;
+            
+            document.getElementById('dataSaida').value = ''; // Clear saída for new entries
+            document.getElementById('horaSaida').value = ''; // Clear saída for new entries
         }
 
         // Function to update access records display
@@ -323,51 +321,96 @@
             acessosDiv.innerHTML = '';
             let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
 
-            // Sort records by date and time of entry in descending order (most recent first)
+            // Sort records by date and time of entry in ascending order (most ancient first)
+            // *** ALTERAÇÃO AQUI para ordenação crescente ***
             acessosSalvos.sort((a, b) => {
-                // Handle cases where dataEntrada or horaEntrada might be missing or invalid
-                const dateA = new Date(`${a.dataEntrada || '1970-01-01'}T${a.horaEntrada || '00:00'}`);
-                const dateB = new Date(`${b.dataEntrada || '1970-01-01'}T${b.horaEntrada || '00:00'}`);
-                return dateB.getTime() - dateA.getTime(); // Descending order based on timestamp
+                const dateA = new Date(`${a.dataEntrada}T${a.horaEntrada}`);
+                const dateB = new Date(`${b.dataEntrada}T${b.horaEntrada}`);
+                return dateA - dateB; // ASCENDING order (most ancient first)
             });
 
+            let acessosFiltrados = acessosSalvos;
             if (filtro) {
                 const termo = filtro.trim().toLowerCase();
-                acessosSalvos = acessosSalvos.filter(a =>
-                    (a.nome && a.nome.toLowerCase().includes(termo)) ||
-                    (a.documento && a.documento.toLowerCase().includes(termo)) ||
-                    (a.apartamento && a.apartamento.toLowerCase().includes(termo))
+                acessosFiltrados = acessosSalvos.filter(a =>
+                    a.nome.toLowerCase().includes(termo) ||
+                    a.documento.toLowerCase().includes(termo) ||
+                    a.apartamento.toLowerCase().includes(termo)
                 );
             }
 
-            if (acessosSalvos.length > 0) {
+            if (acessosFiltrados.length > 0) {
                 noRecordsMessage.classList.add('hidden');
-                acessosSalvos.forEach((acesso) => {
+                acessosFiltrados.forEach((acesso, idx) => {
+                    const originalIndex = acessosSalvos.indexOf(acesso); // Get the original index for editing/deleting
                     const div = document.createElement('div');
-                    div.className = 'acesso-item bg-gray-100 rounded-lg p-4 mb-4 shadow flex flex-col md:flex-row md:items-center gap-4 border border-gray-200';
+                    // Add 'data-original-index' to the div itself for the click event to fill the form
+                    div.className = 'acesso-item bg-gray-100 rounded-lg p-4 mb-4 shadow flex flex-col md:flex-row md:items-center gap-4 border border-gray-200 cursor-pointer hover:bg-gray-200 transition-colors duration-200';
+                    div.dataset.originalIndex = originalIndex; // Store original index for editing/deleting
                     let status = acesso.baixado ? '<span class="text-green-700 font-bold ml-2">(Baixado)</span>' : '';
                     div.innerHTML = `
                         <div class="flex-1 text-gray-800">
-                            <strong>Apartamento:</strong> ${acesso.apartamento || 'N/A'}<br>
-                            <strong>Nome:</strong> ${acesso.nome || 'N/A'}<br>
-                            <strong>Documento:</strong> ${acesso.documento || 'N/A'}<br>
-                            <strong>Quem autorizou:</strong> ${acesso.autorizou || 'N/A'}<br>
-                            <strong>Entrada:</strong> ${acesso.dataEntrada || 'N/A'} ${acesso.horaEntrada || 'N/A'}<br>
+                            <strong>Apartamento:</strong> ${acesso.apartamento}<br>
+                            <strong>Nome:</strong> ${acesso.nome}<br>
+                            <strong>Documento:</strong> ${acesso.documento}<br>
+                            <strong>Quem autorizou:</strong> ${acesso.autorizou}<br>
+                            <strong>Entrada:</strong> ${acesso.dataEntrada} ${acesso.horaEntrada}<br>
                             <strong>Saída:</strong> ${acesso.dataSaida || 'N/A'} ${acesso.horaSaida || 'N/A'}<br>
                             <strong>Empresa:</strong> ${acesso.empresa || 'N/A'}<br>
                             <strong>Serviço:</strong> ${acesso.servico || 'N/A'}${status}
                         </div>
                         <div class="flex flex-col items-center justify-center gap-2 mt-2 md:mt-0">
-                            ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${acesso.id}" />` : ''}
+                            ${acesso.foto ? `<img src="${acesso.foto}" alt="Foto do prestador" class="w-24 h-20 object-cover rounded-lg border border-gray-400 cursor-pointer hover:border-blue-500 transition-all duration-200" data-ampliar="${originalIndex}" />` : ''}
                             <div class="flex flex-wrap justify-center gap-2 mt-2">
-                                <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-id="${acesso.id}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
-                                <button class="btn-editar bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-id="${acesso.id}">Editar</button>
-                                <button class="btn-excluir bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-id="${acesso.id}">Excluir</button>
+                                <button class="btn-baixa-individual bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm ${acesso.baixado ? 'opacity-50 cursor-not-allowed' : ''}" data-index="${originalIndex}" ${acesso.baixado ? 'disabled' : ''}>Dar Baixa</button>
+                                <button class="btn-editar bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${originalIndex}">Editar</button>
+                                <button class="btn-excluir bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-md shadow-sm" data-index="${originalIndex}">Excluir</button>
                             </div>
                         </div>
                     `;
                     acessosDiv.appendChild(div);
                 });
+
+                // Add event listeners for new buttons
+                document.querySelectorAll('.btn-baixa-individual').forEach(button => {
+                    button.onclick = (e) => {
+                        e.stopPropagation(); // Prevent item click event
+                        const index = parseInt(e.target.dataset.index);
+                        darBaixa(index);
+                    };
+                });
+                document.querySelectorAll('.btn-editar').forEach(button => {
+                    button.onclick = (e) => {
+                        e.stopPropagation(); // Prevent item click event
+                        const index = parseInt(e.target.dataset.index);
+                        editarAcesso(index); // This will set editingIndex and show the form in edit mode
+                    };
+                });
+                document.querySelectorAll('.btn-excluir').forEach(button => {
+                    button.onclick = (e) => {
+                        e.stopPropagation(); // Prevent item click event
+                        const index = parseInt(e.target.dataset.index);
+                        excluirAcesso(index); // Directly call delete without confirmation
+                    };
+                });
+                document.querySelectorAll('.acesso-item img').forEach(img => {
+                    img.onclick = (e) => {
+                        e.stopPropagation(); // Prevent item click event
+                        const index = parseInt(e.target.dataset.ampliar);
+                        ampliarFoto(index);
+                    };
+                });
+                // Add click listener to the entire item for auto-filling (but not editing)
+                document.querySelectorAll('.acesso-item').forEach(item => {
+                    item.onclick = (e) => {
+                        // Only trigger if click is not on a button or image
+                        if (!e.target.closest('button') && !e.target.closest('img')) {
+                            const originalIndex = parseInt(item.dataset.originalIndex);
+                            preencherFormularioParaNovoRegistro(originalIndex); // Call new function
+                        }
+                    };
+                });
+
             } else {
                 noRecordsMessage.classList.remove('hidden');
             }
@@ -466,7 +509,7 @@
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
-            editingId = -1; // Reset editing state
+            editingIndex = -1; // Reset editing state
             submitFormBtn.textContent = 'Registrar Acesso'; // Revert button text
             cancelEditBtn.classList.add('hidden'); // Hide cancel button
             setCurrentDateTime(); // Set current date and time for new entry
@@ -476,369 +519,252 @@
         const form = document.getElementById('acessoForm');
         form.onsubmit = function(e) {
             e.preventDefault();
-            const novoAcesso = {
+            const documentoValue = document.getElementById('documento').value.trim();
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+
+            const acesso = {
                 apartamento: document.getElementById('apartamento').value,
                 nome: document.getElementById('nome').value,
-                documento: document.getElementById('documento').value,
+                documento: documentoValue, // Use the trimmed value
                 autorizou: document.getElementById('autorizou').value,
                 dataEntrada: document.getElementById('dataEntrada').value,
                 horaEntrada: document.getElementById('horaEntrada').value,
-                dataSaida: document.getElementById('dataSaida').value || '',
-                horaSaida: document.getElementById('horaSaida').value || '',
-                empresa: document.getElementById('empresa').value || '',
-                servico: document.getElementById('servico').value || '',
+                dataSaida: document.getElementById('dataSaida').value,
+                horaSaida: document.getElementById('horaSaida').value,
+                empresa: document.getElementById('empresa').value,
+                servico: document.getElementById('servico').value,
                 foto: fotoData,
+                baixado: false // New field to track if the record has been "baixado"
             };
 
-            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-
-            if (editingId !== -1) {
-                // Update existing record
-                const foundIndex = acessosSalvos.findIndex(a => a.id == editingId);
-                if (foundIndex !== -1) {
-                    acessosSalvos[foundIndex] = {
-                        ...acessosSalvos[foundIndex],
-                        ...novoAcesso,
-                        id: editingId // Ensure the ID remains the same
-                    };
-                    showModalMessage('Acesso atualizado com sucesso!');
-                } else {
-                    showModalMessage('Erro ao atualizar: Registro não encontrado.');
-                }
-            } else {
-                // Add new record
-                novoAcesso.id = Date.now(); // Assign unique ID for new records
-                novoAcesso.baixado = false; // New records are not "baixado" by default
-                acessosSalvos.push(novoAcesso);
+            if (editingIndex === -1) {
+                acessosSalvos.push(acesso); // Add new record
                 showModalMessage('Acesso registrado com sucesso!');
+            } else {
+                // If we are in editing mode, update the existing record
+                acessosSalvos[editingIndex] = acesso;
+                showModalMessage('Acesso atualizado com sucesso!');
             }
+
             localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
-            atualizarAcessos(); // Update report view
-            clearFormAndResetState(); // Clear form and reset state
+            clearFormAndResetState();
+            atualizarAcessos(); // Update display after submission
         };
 
-        // Delegated event listener for "Dar Baixa", "Editar", "Excluir" and photo amplification
-        const acessosDiv = document.getElementById('acessos');
-        acessosDiv.addEventListener('click', function(e) {
-            // Get the ID from the clicked button/image
-            const itemIdStr = e.target.getAttribute('data-id');
-            const clickedImgId = e.target.getAttribute('data-ampliar'); // For image amplification
-
-            // Convert itemIdStr to a number for comparison
-            const itemId = parseInt(itemIdStr);
-
+        // Function to handle "Dar Baixa"
+        function darBaixa(index) {
             let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-            // Find the index of the item using its numeric ID
-            const foundIndex = acessosSalvos.findIndex(a => a.id === itemId);
+            if (index >= 0 && index < acessosSalvos.length) {
+                // Confirm before giving baixa
+                showModalMessage('Tem certeza que deseja dar baixa neste registro?', 'confirm', () => {
+                    acessosSalvos[index].baixado = true;
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    acessosSalvos[index].dataSaida = `${year}-${month}-${day}`;
+                    acessosSalvos[index].horaSaida = `${hours}:${minutes}`;
 
-            console.log('Clicked element:', e.target);
-            console.log('Item ID from data-id:', itemIdStr);
-            console.log('Parsed Item ID:', itemId);
-            console.log('Found Index:', foundIndex);
-            console.log('Acessos Salvos:', acessosSalvos);
-
-
-            // Dar Baixa
-            if (e.target.classList.contains('btn-baixa-individual') && foundIndex !== -1) {
-                if (!acessosSalvos[foundIndex].baixado) {
-                    showModalMessage('Tem certeza que deseja dar baixa neste acesso?', 'confirm', () => {
-                        acessosSalvos[foundIndex].baixado = true;
-                        // Automatically fill dataSaida and horaSaida
-                        const agora = new Date();
-                        const yearNow = agora.getFullYear();
-                        const mmNow = String(agora.getMonth() + 1).padStart(2, '0');
-                        const ddNow = String(agora.getDate()).padStart(2, '0');
-                        const hhNow = String(agora.getHours()).padStart(2, '0');
-                        const minNow = String(agora.getMinutes()).padStart(2, '0');
-                        acessosSalvos[foundIndex].dataSaida = `${yearNow}-${mmNow}-${ddNow}`;
-                        acessosSalvos[foundIndex].horaSaida = `${hhNow}:${minNow}`;
-                        localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
-                        atualizarAcessos();
-                        showModalMessage('Acesso baixado com sucesso!');
-                    });
-                } else {
-                    showModalMessage('Este acesso já foi baixado.');
-                }
+                    localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+                    showModalMessage('Baixa registrada com sucesso!');
+                    atualizarAcessos();
+                });
             }
-            // Editar
-            else if (e.target.classList.contains('btn-editar') && foundIndex !== -1) {
-                const acessoToEdit = acessosSalvos[foundIndex];
+        }
 
-                showScreen('formScreen'); // Switch to form screen
-                editingId = acessoToEdit.id; // Set editing ID
+        // Function to edit an access record (fills form and sets editing mode)
+        function editarAcesso(index) {
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            if (index >= 0 && index < acessosSalvos.length) {
+                const acesso = acessosSalvos[index];
+                document.getElementById('apartamento').value = acesso.apartamento;
+                document.getElementById('nome').value = acesso.nome;
+                document.getElementById('documento').value = acesso.documento;
+                document.getElementById('autorizou').value = acesso.autorizou;
+                document.getElementById('dataEntrada').value = acesso.dataEntrada;
+                document.getElementById('horaEntrada').value = acesso.horaEntrada;
+                document.getElementById('dataSaida').value = acesso.dataSaida;
+                document.getElementById('horaSaida').value = acesso.horaSaida;
+                document.getElementById('empresa').value = acesso.empresa;
+                document.getElementById('servico').value = acesso.servico;
 
-                // Populate form fields
-                document.getElementById('apartamento').value = acessoToEdit.apartamento || '';
-                document.getElementById('nome').value = acessoToEdit.nome || '';
-                document.getElementById('documento').value = acessoToEdit.documento || '';
-                document.getElementById('autorizou').value = acessoToEdit.autorizou || '';
-                document.getElementById('dataEntrada').value = acessoToEdit.dataEntrada || '';
-                document.getElementById('horaEntrada').value = acessoToEdit.horaEntrada || '';
-                document.getElementById('dataSaida').value = acessoToEdit.dataSaida || '';
-                document.getElementById('horaSaida').value = acessoToEdit.horaSaida || '';
-                document.getElementById('empresa').value = acessoToEdit.empresa || '';
-                document.getElementById('servico').value = acessoToEdit.servico || '';
-
-                if (acessoToEdit.foto) {
-                    foto.src = acessoToEdit.foto;
+                if (acesso.foto) {
+                    foto.src = acesso.foto;
                     foto.classList.remove('hidden');
-                    fotoData = acessoToEdit.foto;
+                    fotoData = acesso.foto;
                 } else {
                     foto.classList.add('hidden');
                     foto.src = '';
                     fotoData = '';
                 }
 
-                submitFormBtn.textContent = 'Atualizar Acesso'; // Change button text
-                cancelEditBtn.classList.remove('hidden'); // Show cancel edit button
+                // Hide camera elements if a photo is already loaded or being edited
+                video.classList.add('hidden');
+                tirarFotoBtn.classList.add('hidden');
+                abrirCameraBtn.classList.remove('hidden');
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+
+                editingIndex = index; // Set the index of the item being edited
+                submitFormBtn.textContent = 'Atualizar Acesso'; // Change button text for editing
+                cancelEditBtn.classList.remove('hidden'); // Show cancel button
+
+                showFormScreen(); // Switch to form screen to show pre-filled data
             }
-            // Excluir
-            else if (e.target.classList.contains('btn-excluir') && foundIndex !== -1) {
-                showModalMessage('Tem certeza que deseja excluir este acesso? Esta ação é irreversível.', 'confirm', () => {
-                    acessosSalvos.splice(foundIndex, 1); // Remove item at the found index
-                    localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
-                    atualizarAcessos();
-                    showModalMessage('Acesso excluído com sucesso!');
-                    clearFormAndResetState(); // Clear form in case it was being edited
-                });
+        }
+
+        // Function to fill form for a NEW record (from search result)
+        function preencherFormularioParaNovoRegistro(index) {
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            if (index >= 0 && index < acessosSalvos.length) {
+                const acesso = acessosSalvos[index];
+                
+                // Fill static fields
+                document.getElementById('apartamento').value = acesso.apartamento;
+                document.getElementById('nome').value = acesso.nome;
+                document.getElementById('documento').value = acesso.documento;
+                document.getElementById('autorizou').value = acesso.autorizou;
+                document.getElementById('empresa').value = acesso.empresa;
+                document.getElementById('servico').value = acesso.servico;
+
+                // Transfer photo data
+                if (acesso.foto) {
+                    foto.src = acesso.foto;
+                    foto.classList.remove('hidden');
+                    fotoData = acesso.foto;
+                } else {
+                    foto.classList.add('hidden');
+                    foto.src = '';
+                    fotoData = '';
+                }
+
+                // Set current date/time for the new entry, clear exit times
+                setCurrentDateTime();
+                
+                // Reset editing state to prepare for a new record
+                editingIndex = -1; // This is crucial to make it a new record
+                submitFormBtn.textContent = 'Registrar Acesso'; // Ensure button says "Registrar Acesso"
+                cancelEditBtn.classList.add('hidden'); // Hide cancel button as it's a new entry
+
+                // Hide camera elements if a photo is already loaded or being transferred
+                video.classList.add('hidden');
+                tirarFotoBtn.classList.add('hidden');
+                abrirCameraBtn.classList.remove('hidden');
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+
+                showFormScreen(); // Switch to form screen to show pre-filled data for new entry
+                // showModalMessage('Formulário preenchido com dados do registro anterior. Atualize a data/hora de entrada e registre um novo acesso.');
+                // Removida a mensagem modal para um fluxo mais suave
             }
-            // Ampliar foto ao clicar
-            if (e.target.tagName === 'IMG' && clickedImgId) { // Check for data-ampliar attribute
+        }
+
+
+        // Cancel edit button functionality
+        cancelEditBtn.onclick = function() {
+            clearFormAndResetState();
+        };
+
+        // Function to delete an access record
+        function excluirAcesso(index) {
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            if (index >= 0 && index < acessosSalvos.length) {
+                acessosSalvos.splice(index, 1); // Remove the item
+                localStorage.setItem('acessos', JSON.stringify(acessosSalvos));
+                showModalMessage('Registro excluído com sucesso!'); // Inform user of successful deletion
+                atualizarAcessos(); // Re-render the list
+                clearFormAndResetState(); // Clear form just in case it was in edit mode for this record
+            }
+        }
+
+        // Function to enlarge photo in a modal
+        function ampliarFoto(index) {
+            let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
+            if (index >= 0 && index < acessosSalvos.length && acessosSalvos[index].foto) {
+                const imageUrl = acessosSalvos[index].foto;
                 const overlay = document.createElement('div');
-                overlay.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
-                const img = document.createElement('img');
-                img.src = e.target.src;
-                img.className = 'max-w-full max-h-[90vh] md:max-w-3xl md:max-h-[80vh] rounded-lg border-8 border-white shadow-2xl object-contain';
-                overlay.appendChild(img);
-                overlay.onclick = function() { document.body.removeChild(overlay); };
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                    <div class="modal-content !p-0 bg-transparent shadow-none max-w-4xl max-h-[90vh] overflow-auto">
+                        <img src="${imageUrl}" alt="Foto Ampliada" class="w-full h-auto rounded-lg shadow-xl object-contain max-h-[85vh]">
+                        <button class="absolute top-4 right-4 bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold" onclick="this.closest('.modal-overlay').remove()">X</button>
+                    </div>
+                `;
                 document.body.appendChild(overlay);
+            }
+        }
+
+        // --- Navigation and Screen Management ---
+        function showFormScreen() {
+            formScreen.classList.remove('hidden');
+            reportScreen.classList.add('hidden');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            showFormBtn.classList.add('active');
+            // If we are not in editing mode (i.e., opening for a new entry or after cancelling edit)
+            if (editingIndex === -1) {
+                setCurrentDateTime(); // Ensure date/time is current for a new entry
+                submitFormBtn.textContent = 'Registrar Acesso';
+                cancelEditBtn.classList.add('hidden');
+            }
+        }
+
+        function showReportScreen() {
+            reportScreen.classList.remove('hidden');
+            formScreen.classList.add('hidden');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            showReportBtn.classList.add('active');
+            atualizarAcessos(); // Load and display records when showing report
+            document.getElementById('buscaInput').value = ''; // Clear search input
+            clearFormAndResetState(); // Clear form when navigating away from it
+        }
+
+        showFormBtn.onclick = showFormScreen;
+        showReportBtn.onclick = showReportScreen;
+
+        // --- Search Functionality ---
+        const buscaInput = document.getElementById('buscaInput');
+        const btnBuscar = document.getElementById('btnBuscar');
+        const btnLimparBusca = document.getElementById('btnLimparBusca');
+
+        btnBuscar.onclick = () => {
+            atualizarAcessos(buscaInput.value);
+        };
+
+        btnLimparBusca.onclick = () => {
+            buscaInput.value = '';
+            atualizarAcessos();
+        };
+
+        buscaInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                atualizarAcessos(buscaInput.value);
             }
         });
 
-        // Cancel Edit button handler
-        cancelEditBtn.addEventListener('click', clearFormAndResetState);
-
-        // Export to CSV
-        const btnRelatorio = document.getElementById('btnRelatorio');
-        if (btnRelatorio) {
-            btnRelatorio.onclick = function() {
-                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos.length === 0) {
-                    showModalMessage('Nenhum registro para exportar!');
-                    return;
-                }
-                let csv = 'Apartamento,Nome,Documento,Quem autorizou,Data Entrada,Hora Entrada,Data Saída,Hora Saída,Empresa,Serviço,Baixado\n';
-                acessosSalvos.forEach(a => {
-                    csv += `"${a.apartamento || ''}","${a.nome || ''}","${a.documento || ''}","${a.autorizou || ''}","${a.dataEntrada || ''}","${a.horaEntrada || ''}","${a.dataSaida || ''}","${a.horaSaida || ''}","${a.empresa || ''}","${a.servico || ''}","${a.baixado ? 'Sim' : 'Não'}"\n`;
-                });
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'relatorio_acessos.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showModalMessage('Relatório CSV exportado com sucesso!');
-            };
-        }
-
-        // Export to PDF
-        const btnExportarPDF = document.getElementById('btnExportarPDF');
-        if (btnExportarPDF) {
-            btnExportarPDF.onclick = function() {
-                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos.length === 0) {
-                    showModalMessage('Nenhum registro para exportar!');
-                    return;
-                }
-                let win = window.open('', '_blank', 'width=900,height=700');
-                win.document.write('<html><head><title>Relatório de Acessos</title>');
-                win.document.write('<style>');
-                win.document.write('body{font-family:sans-serif; margin: 20px;}');
-                win.document.write('h2{text-align:center; color:#1e40af;}');
-                win.document.write('table{border-collapse:collapse;width:100%;margin-top:20px;}');
-                win.document.write('th,td{border:1px solid #ccc;padding:8px;text-align:left;}');
-                win.document.write('th{background:#e0e7ff; color:#1e40af; font-weight:bold;}');
-                win.document.write('tr:nth-child(even){background-color:#f9fafb;}');
-                win.document.write('img{max-width:80px; max-height:60px; object-fit:cover; border-radius:4px;}');
-                win.document.write('</style>');
-                win.document.write('</head><body>');
-                win.document.write('<h2>Relatório de Acessos</h2>');
-                win.document.write('<table><tr><th>Apartamento</th><th>Nome</th><th>Documento</th><th>Quem autorizou</th><th>Data Entrada</th><th>Hora Entrada</th><th>Data Saída</th><th>Hora Saída</th><th>Empresa</th><th>Serviço</th><th>Baixado</th><th>Foto</th></tr>');
-                acessosSalvos.forEach(a => {
-                    const fotoHtml = a.foto ? `<img src="${a.foto}" />` : 'N/A';
-                    win.document.write(`<tr>
-                        <td>${a.apartamento || ''}</td>
-                        <td>${a.nome || ''}</td>
-                        <td>${a.documento || ''}</td>
-                        <td>${a.autorizou || ''}</td>
-                        <td>${a.dataEntrada || ''}</td>
-                        <td>${a.horaEntrada || ''}</td>
-                        <td>${a.dataSaida || 'N/A'}</td>
-                        <td>${a.horaSaida || 'N/A'}</td>
-                        <td>${a.empresa || 'N/A'}</td>
-                        <td>${a.servico || 'N/A'}</td>
-                        <td>${a.baixado ? 'Sim' : 'Não'}</td>
-                        <td>${fotoHtml}</td>
-                    </tr>`);
-                });
-                win.document.write('</table></body></html>');
-                win.document.close();
-                win.print();
-            };
-        }
-
-        // Export to JSON
-        const btnExportarArquivo = document.getElementById('btnExportarArquivo');
-        if (btnExportarArquivo) {
-            btnExportarArquivo.onclick = function() {
-                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos.length === 0) {
-                    showModalMessage('Nenhum registro para exportar!');
-                    return;
-                }
-                const blob = new Blob([JSON.stringify(acessosSalvos, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                // Also trigger download
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'acessos.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                showModalMessage('Dados exportados para JSON com sucesso!');
-            };
-        }
-
-        // Search functionality
-        const btnBuscar = document.getElementById('btnBuscar');
-        const btnLimparBusca = document.getElementById('btnLimparBusca');
-        const buscaInput = document.getElementById('buscaInput');
-
-        if (btnBuscar && buscaInput) {
-            btnBuscar.onclick = function() {
-                const termo = buscaInput.value.trim().toLowerCase();
-                atualizarAcessos(termo);
-                // Auto-fill form fields if exact document match found
-                if (termo) {
-                    const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                    const encontrado = acessosSalvos.find(a => a.documento && a.documento.toLowerCase() === termo);
-                    if (encontrado) {
-                        showScreen('formScreen'); // Switch to form to show populated fields
-                        editingId = encontrado.id; // Set editing ID for found item
-                        document.getElementById('apartamento').value = encontrado.apartamento || '';
-                        document.getElementById('nome').value = encontrado.nome || '';
-                        document.getElementById('documento').value = encontrado.documento || '';
-                        document.getElementById('autorizou').value = encontrado.autorizou || '';
-                        document.getElementById('dataEntrada').value = encontrado.dataEntrada || '';
-                        document.getElementById('horaEntrada').value = encontrado.horaEntrada || '';
-                        document.getElementById('dataSaida').value = encontrado.dataSaida || '';
-                        document.getElementById('horaSaida').value = encontrado.horaSaida || '';
-                        document.getElementById('empresa').value = encontrado.empresa || '';
-                        document.getElementById('servico').value = encontrado.servico || '';
-                        if (encontrado.foto) {
-                            foto.src = encontrado.foto;
-                            foto.classList.remove('hidden');
-                            fotoData = encontrado.foto;
-                        } else {
-                            foto.classList.add('hidden');
-                            foto.src = '';
-                            fotoData = '';
-                        }
-                        submitFormBtn.textContent = 'Atualizar Acesso';
-                        cancelEditBtn.classList.remove('hidden');
-                    } else {
-                        showModalMessage('Nenhum registro encontrado com o documento exato para preencher o formulário.');
-                    }
-                }
-            };
-        }
-        if (btnLimparBusca && buscaInput) {
-            btnLimparBusca.onclick = function() {
-                buscaInput.value = '';
-                atualizarAcessos();
-                clearFormAndResetState(); // Clear form when clearing search
-            };
-        }
-
-        // Send PDF by Email (simulated)
-        const btnEnviarEmail = document.getElementById('btnEnviarEmail');
-        if (btnEnviarEmail) {
-            btnEnviarEmail.onclick = function() {
-                const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
-                if (acessosSalvos.length === 0) {
-                    showModalMessage('Nenhum registro para enviar!');
-                    return;
-                }
-                // Simulate PDF generation and then prompt for email
-                const win = window.open('', '_blank', 'width=900,height=700');
-                let html = '<h2>Relatório de Acessos</h2>';
-                html += '<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-family:sans-serif;">';
-                html += '<tr><th>Apartamento</th><th>Nome</th><th>Documento</th><th>Quem autorizou</th><th>Data Entrada</th><th>Hora Entrada</th><th>Data Saída</th><th>Hora Saída</th><th>Empresa</th><th>Serviço</th><th>Baixado</th></tr>';
-                acessosSalvos.forEach(a => {
-                    html += `<tr><td>${a.apartamento || ''}</td><td>${a.nome || ''}</td><td>${a.documento || ''}</td><td>${a.autorizou || ''}</td><td>${a.dataEntrada || ''}</td><td>${a.horaEntrada || ''}</td><td>${a.dataSaida || 'N/A'}</td><td>${a.horaSaida || 'N/A'}</td><td>${a.empresa || 'N/A'}</td><td>${a.servico || 'N/A'}</td><td>${a.baixado ? 'Sim' : 'Não'}</td></tr>`;
-                });
-                html += '</table>';
-                win.document.write('<html><head><title>Relatório de Acessos</title></head><body>' + html + '</body></html>');
-                win.document.close();
-
-                setTimeout(() => {
-                    win.print(); // Triggers print dialog which usually includes "Save as PDF"
-                    // Use a custom modal for user input instead of prompt
-                    const emailPromptModal = document.createElement('div');
-                    emailPromptModal.className = 'modal-overlay';
-                    emailPromptModal.innerHTML = `
-                        <div class="modal-content">
-                            <p class="text-lg font-semibold mb-4">Digite o e-mail de destino para enviar o PDF:</p>
-                            <input type="email" id="emailInput" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="seuemail@exemplo.com" />
-                            <div class="flex justify-center gap-4 mt-4">
-                                <button id="sendEmailConfirmBtn" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg">Enviar</button>
-                                <button id="cancelEmailBtn" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
-                            </div>
-                        </div>
-                    `;
-                    document.body.appendChild(emailPromptModal);
-
-                    document.getElementById('sendEmailConfirmBtn').onclick = () => {
-                        const email = document.getElementById('emailInput').value;
-                        if (email) {
-                            showModalMessage('Para enviar o PDF por e-mail, anexe o arquivo PDF gerado ao e-mail manualmente.\n\nPor questões de segurança, o envio automático só é possível com integração de backend.');
-                        }
-                        emailPromptModal.remove();
-                    };
-                    document.getElementById('cancelEmailBtn').onclick = () => emailPromptModal.remove();
-
-                }, 500);
-            };
-        }
-
-        // Navigation functions
-        function showScreen(screenId) {
-            formScreen.classList.add('hidden');
-            reportScreen.classList.add('hidden');
-            document.getElementById(screenId).classList.remove('hidden');
-
-            navButtons.forEach(button => button.classList.remove('active'));
-            if (screenId === 'formScreen') {
-                showFormBtn.classList.add('active');
-            } else if (screenId === 'reportScreen') {
-                showReportBtn.classList.add('active');
-                atualizarAcessos(); // Refresh report data when navigating to report screen
-            }
-        }
-
-        // Event listeners for navigation buttons
-        showFormBtn.addEventListener('click', () => showScreen('formScreen'));
-        showReportBtn.addEventListener('click', () => showScreen('reportScreen'));
-
-        // Initial load: show form screen and update current date/time
-        window.onload = function() {
-            showScreen('formScreen');
-            setCurrentDateTime(); // Set current date and time on load
+        // --- Export Functionality (Placeholder for future implementation) ---
+        document.getElementById('btnRelatorio').onclick = () => {
+            showModalMessage('Funcionalidade de Exportar CSV ainda não implementada.');
         };
+        document.getElementById('btnExportarPDF').onclick = () => {
+            showModalMessage('Funcionalidade de Exportar PDF ainda não implementada.');
+        };
+        document.getElementById('btnExportarArquivo').onclick = () => {
+            showModalMessage('Funcionalidade de Exportar JSON ainda não implementada.');
+        };
+        document.getElementById('btnEnviarEmail').onclick = () => {
+            showModalMessage('Funcionalidade de Enviar PDF por Email ainda não implementada.');
+        };
+
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            setCurrentDateTime();
+            showFormScreen(); // Start on the form screen
+        });
     </script>
 </body>
 </html>
