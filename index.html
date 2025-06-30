@@ -52,7 +52,7 @@
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 44px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
             max-width: 90%; /* Ensure modal is responsive */
         }
@@ -496,7 +496,8 @@
 
             if (editingId !== -1) {
                 // Update existing record (Atualizar registro existente)
-                const foundIndex = acessosSalvos.findIndex(a => a.id == editingId);
+                // Usar Number(a.id) para garantir que a comparação de ID seja numérica
+                const foundIndex = acessosSalvos.findIndex(a => Number(a.id) === editingId);
                 if (foundIndex !== -1) {
                     acessosSalvos[foundIndex] = {
                         ...acessosSalvos[foundIndex],
@@ -532,14 +533,15 @@
 
             let acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
             // Find the index of the item using its numeric ID (Encontra o índice do item usando seu ID numérico)
-            const foundIndex = acessosSalvos.findIndex(a => a.id === itemId);
+            // Usar Number(a.id) para garantir que a comparação de ID seja numérica
+            const foundIndex = acessosSalvos.findIndex(a => Number(a.id) === itemId);
 
             // Console logs for debugging (Logs do console para depuração)
-            // console.log('Clicked element:', e.target);
-            // console.log('Item ID from data-id:', itemIdStr);
-            // console.log('Parsed Item ID:', itemId);
-            // console.log('Found Index:', foundIndex);
-            // console.log('Acessos Salvos:', acessosSalvos);
+            console.log('Elemento clicado:', e.target);
+            console.log('ID do item (string do atributo):', itemIdStr);
+            console.log('ID do item (inteiro):', itemId);
+            console.log('Índice encontrado:', foundIndex);
+            console.log('Registros salvos:', acessosSalvos.map(item => ({ id: item.id, type: typeof item.id, nome: item.nome })));
 
 
             // Dar Baixa
@@ -725,24 +727,27 @@
         if (btnBuscar && buscaInput) {
             btnBuscar.onclick = function() {
                 const termo = buscaInput.value.trim().toLowerCase();
-                atualizarAcessos(termo);
+                atualizarAcessos(termo); // Atualiza a exibição da lista com o filtro
+
                 // Auto-fill form fields if exact document match found (Preenche automaticamente os campos do formulário se encontrar correspondência exata)
                 if (termo) {
                     const acessosSalvos = JSON.parse(localStorage.getItem('acessos')) || [];
                     const encontrado = acessosSalvos.find(a => a.documento && a.documento.toLowerCase() === termo);
+
                     if (encontrado) {
-                        showScreen('formScreen'); // Switch to form to show populated fields (Muda para o formulário para mostrar campos preenchidos)
-                        editingId = encontrado.id; // Set editing ID for found item (Define o ID de edição para o item encontrado)
+                        showScreen('formScreen'); // Muda para a tela do formulário
+
+                        // Popula os campos do formulário
                         document.getElementById('apartamento').value = encontrado.apartamento || '';
                         document.getElementById('nome').value = encontrado.nome || '';
                         document.getElementById('documento').value = encontrado.documento || '';
                         document.getElementById('autorizou').value = encontrado.autorizou || '';
-                        document.getElementById('dataEntrada').value = encontrado.dataEntrada || '';
-                        document.getElementById('horaEntrada').value = encontrado.horaEntrada || '';
-                        document.getElementById('dataSaida').value = encontrado.dataSaida || '';
-                        document.getElementById('horaSaida').value = encontrado.horaSaida || '';
+                        // Não preencher dataEntrada/horaEntrada/dataSaida/horaSaida para manter como novo registro de entrada
+                        document.getElementById('dataSaida').value = ''; // Limpa data de saída
+                        document.getElementById('horaSaida').value = ''; // Limpa hora de saída
                         document.getElementById('empresa').value = encontrado.empresa || '';
                         document.getElementById('servico').value = encontrado.servico || '';
+
                         if (encontrado.foto) {
                             foto.src = encontrado.foto;
                             foto.classList.remove('hidden');
@@ -752,8 +757,14 @@
                             foto.src = '';
                             fotoData = '';
                         }
-                        submitFormBtn.textContent = 'Atualizar Acesso';
-                        cancelEditBtn.classList.remove('hidden');
+
+                        // Resetar o estado de edição para que seja um NOVO cadastro
+                        editingId = -1;
+                        submitFormBtn.textContent = 'Registrar Acesso';
+                        cancelEditBtn.classList.add('hidden'); // Esconde o botão de cancelar edição
+                        setCurrentDateTime(); // Define a data e hora atual para a nova entrada
+                        showModalMessage('Registro encontrado! Formulário preenchido para um NOVO cadastro.');
+
                     } else {
                         showModalMessage('Nenhum registro encontrado com o documento exato para preencher o formulário.');
                     }
@@ -764,7 +775,7 @@
             btnLimparBusca.onclick = function() {
                 buscaInput.value = '';
                 atualizarAcessos();
-                clearFormAndResetState(); // Clear form when clearing search (Limpa formulário ao limpar a busca)
+                clearFormAndResetState(); // Limpa formulário ao limpar a busca
             };
         }
 
